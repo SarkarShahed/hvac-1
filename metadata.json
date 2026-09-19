@@ -1,0 +1,8 @@
+{
+  "name": "HVAC01-preferre dairaz",
+  "description": "HVAC services platform with cinematic slider, 5-step dynamic pricing estimator, and real-time booking.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

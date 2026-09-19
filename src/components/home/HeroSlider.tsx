@@ -1,0 +1,155 @@
+import React, { useEffect, useRef } from 'react';
+import HvacPricingEstimator from './HvacPricingEstimator';
+import { Phone, CalendarDays } from 'lucide-react';
+import { motion } from 'motion/react';
+import gsap from 'gsap';
+
+interface CounterItemProps {
+  endVal: number;
+  suffix?: string;
+  prefix?: string;
+  decimals?: number;
+  useComma?: boolean;
+  label: string;
+  delay?: number;
+}
+
+const CounterItem: React.FC<CounterItemProps> = ({
+  endVal,
+  suffix = '',
+  prefix = '',
+  decimals = 0,
+  useComma = false,
+  label,
+  delay = 0.2,
+}) => {
+  const numRef = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    const obj = { val: 0 };
+    if (!numRef.current) return;
+
+    const ctx = gsap.context(() => {
+      gsap.to(obj, {
+        val: endVal,
+        duration: 2.5,
+        ease: 'expo.out',
+        delay: delay,
+        onUpdate: () => {
+          if (!numRef.current) return;
+          let formatted = obj.val.toFixed(decimals);
+          if (useComma) {
+            const parts = formatted.split('.');
+            parts[0] = parseInt(parts[0], 10).toLocaleString('en-US');
+            formatted = parts.join('.');
+          }
+          numRef.current.textContent = `${prefix}${formatted}${suffix}`;
+        },
+      });
+    }, numRef);
+
+    return () => ctx.revert();
+  }, [endVal, suffix, prefix, decimals, useComma, delay]);
+
+  return (
+    <div className="flex flex-col">
+      <span ref={numRef} className="font-nohemi font-bold text-xl sm:text-2xl text-white tracking-tight">
+        {prefix}0{suffix}
+      </span>
+      <span className="text-[10px] sm:text-[11px] font-subheading uppercase tracking-wider text-white/70 mt-1 whitespace-nowrap">
+        {label}
+      </span>
+    </div>
+  );
+};
+
+export const HeroSlider: React.FC = () => {
+  return (
+    <section
+      id="hero-section"
+      className="relative w-full max-w-[100vw] min-h-screen bg-[#121417] p-5 sm:p-7 lg:p-8 pt-[100px] sm:pt-[110px] lg:pt-[120px] pb-8 lg:pb-10 flex flex-col justify-between overflow-x-hidden"
+    >
+      {/* Immersive Background with Subtle Zoom Entrance */}
+      <div className="absolute inset-0 z-0 overflow-hidden">
+        <div className="absolute inset-0 bg-black/55 z-10" />
+        <motion.img
+          initial={{ scale: 1.06, opacity: 0.8 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
+          src="/owner-by-van.webp"
+          alt="Preferred Air Owner standing by company van"
+          className="w-full h-full object-cover object-center"
+          referrerPolicy="no-referrer"
+          loading="eager"
+          decoding="async"
+        />
+      </div>
+
+      {/* BOTTOM ROW: Split Grid Layout */}
+      <div className="relative z-20 w-full mt-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-end">
+        
+        {/* Left Column: Headline, Discover Action, & GSAP Animated Counters */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.9, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+          className="lg:col-span-7 flex flex-col items-start text-left space-y-4 lg:space-y-5"
+        >
+          <div className="space-y-1.5">
+            <p className="text-[11px] sm:text-xs font-subheading uppercase tracking-[0.22em] text-[#ECEDEF]/80 font-normal">
+              Experience the preferred air difference.
+            </p>
+            <h1 className="font-nohemi font-bold text-3xl sm:text-4xl md:text-5xl lg:text-[44px] xl:text-[50px] text-white leading-[1.08] tracking-tight capitalize">
+              $500 Off Complete<br className="hidden md:inline" /> System Replacement
+            </h1>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3.5">
+            <a
+              href="#finance"
+              className="bg-[#ECEDEF] text-[#121417] hover:bg-white hover:text-[#121417] pl-6 pr-2 py-2 rounded-full text-xs font-nohemi font-bold uppercase tracking-wider transition-all duration-300 cursor-pointer shadow-md active:scale-98 flex items-center gap-3"
+            >
+              <span>Financing Offers</span>
+              <span className="w-7 h-7 rounded-full bg-[#121417] text-white flex items-center justify-center shrink-0">
+                <CalendarDays className="w-3.5 h-3.5" />
+              </span>
+            </a>
+
+            <a
+              href="tel:18005550199"
+              className="bg-transparent text-white hover:bg-white/10 border border-white/20 pl-6 pr-2 py-2 rounded-full text-xs font-nohemi font-bold uppercase tracking-wider transition-all duration-300 cursor-pointer active:scale-98 flex items-center gap-3"
+            >
+              <span>Call Us Today</span>
+              <span className="w-7 h-7 rounded-full bg-white text-[#121417] flex items-center justify-center shrink-0">
+                <Phone className="w-3.5 h-3.5" />
+              </span>
+            </a>
+          </div>
+
+          {/* GSAP Clean Number Counter */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-5 pt-3 border-t border-white/15 w-full max-w-[480px] mt-1 sm:mt-2">
+            <CounterItem endVal={2400} useComma suffix="+" label="Jobs done" delay={0.1} />
+            <CounterItem endVal={4.9} decimals={1} suffix="★" label="Rating" delay={0.2} />
+            <CounterItem endVal={47} suffix=" min" label="Response" delay={0.3} />
+            <CounterItem endVal={98} suffix="%" label="Return rate" delay={0.4} />
+          </div>
+        </motion.div>
+
+        {/* Right Column: Dynamic Hvac Pricing Estimator Card */}
+        <motion.div
+          initial={{ opacity: 0, y: 35, scale: 0.98 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 1.0, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+          className="lg:col-span-5 w-full max-w-md ml-auto relative"
+        >
+          <div className="absolute -inset-1.5 bg-gradient-to-r from-white/15 to-transparent rounded-[24px] blur-lg opacity-75 pointer-events-none" />
+          <div className="relative z-10">
+            <HvacPricingEstimator />
+          </div>
+        </motion.div>
+
+      </div>
+    </section>
+  );
+};
+
