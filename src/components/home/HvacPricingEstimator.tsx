@@ -24,15 +24,12 @@ import {
   Check,
   X,
   Minus,
-  Info,
-  Sparkles,
   Mail,
   Phone,
   User,
   MessageSquare,
   ArrowRight,
   ArrowLeft,
-  Calculator,
 } from 'lucide-react';
 import { useHvacEstimator, ServiceType, SystemType, IssueType, UrgencyType, UploadedPhoto } from '../../context/HvacEstimatorContext';
 
@@ -73,7 +70,6 @@ export default function HvacPricingEstimator({
   const [localMessage, setLocalMessage] = useState<string>('');
   const [localEmail, setLocalEmail] = useState<string>('');
   const [localEmailSent, setLocalEmailSent] = useState<boolean>(false);
-  const [localShowExplanation, setLocalShowExplanation] = useState<boolean>(false);
 
   const step = contextState ? contextState.step : localStep;
   const setStep = contextState ? contextState.setStep : setLocalStep;
@@ -104,8 +100,6 @@ export default function HvacPricingEstimator({
   const setEmail = contextState ? contextState.setEmail : setLocalEmail;
   const emailSent = contextState ? contextState.emailSent : localEmailSent;
   const setEmailSent = contextState ? contextState.setEmailSent : setLocalEmailSent;
-  const showExplanation = contextState ? contextState.showExplanation : localShowExplanation;
-  const setShowExplanation = contextState ? contextState.setShowExplanation : setLocalShowExplanation;
 
   const calculatePricing = contextState ? contextState.calculatePricing : () => {
     const bases: Record<ServiceType, number> = {
@@ -140,8 +134,6 @@ export default function HvacPricingEstimator({
   };
 
   const pricing = calculatePricing();
-  const canGoToStep2 = selectedService !== null;
-  const canGoToStep4 = selectedIssue !== null && selectedUrgency !== null;
 
   const handlePhotoUpload = contextState ? contextState.handlePhotoUpload : (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
@@ -178,7 +170,7 @@ export default function HvacPricingEstimator({
   return (
     <div
       id="hvac-dynamic-pricing-estimator"
-      className={`w-full bg-[#121417]/55 backdrop-blur-[25px] text-white rounded-none shadow-2xl shadow-black/70 border border-white/20 overflow-hidden flex flex-col transition-all duration-300 ${
+      className={`w-full bg-[#121417]/55 backdrop-blur-[25px] text-white rounded-none shadow-2xl shadow-black/70 border border-white/20 overflow-hidden flex flex-col transition-all duration-300 mb-0 pb-0 mt-auto self-end ${
         isFloatingModal ? 'max-h-[85vh]' : 'max-h-[580px]'
       } font-['Delight'] font-normal`}
     >
@@ -568,7 +560,7 @@ export default function HvacPricingEstimator({
                     key={photo.id}
                     className="relative w-[44px] h-[44px] rounded-none overflow-hidden border border-white/20 backdrop-blur-[25px]"
                   >
-                    <img src={photo.url} alt="HVAC Upload" className="w-full h-full object-cover" />
+                    <img src={photo.url} alt="HVAC Upload" loading="lazy" decoding="async" className="w-full h-full object-cover" />
                     <button
                       type="button"
                       onClick={(e) => {

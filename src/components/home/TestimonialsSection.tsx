@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Star, CheckCircle, ArrowUpRight, Filter, ShieldCheck, Quote } from 'lucide-react';
+import { Star, ArrowUpRight, ShieldCheck } from 'lucide-react';
 
 export interface Testimonial {
   id: string;
@@ -411,6 +411,8 @@ export const TestimonialsSection: React.FC = () => {
                       src={item.avatar}
                       alt={item.author}
                       referrerPolicy="no-referrer"
+                      loading="lazy"
+                      decoding="async"
                       className="w-10 h-10 rounded-[8px] object-cover shrink-0 bg-zinc-200"
                     />
                     <div className="text-left">

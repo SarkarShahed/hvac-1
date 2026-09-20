@@ -3,9 +3,6 @@ import { motion } from 'motion/react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import {
-  Wrench,
-  Gauge,
-  Activity,
   ShieldCheck,
   Wind,
   Layers,
@@ -314,6 +311,8 @@ export const MajorServicesSlider: React.FC = () => {
                       <img
                         src={item.image}
                         alt={item.title}
+                        loading="lazy"
+                        decoding="async"
                         className="w-full h-full object-cover object-center scale-100 group-hover:scale-105 transition-transform duration-500 ease-out"
                         referrerPolicy="no-referrer"
                       />
@@ -395,6 +394,8 @@ export const MajorServicesSlider: React.FC = () => {
                       <img
                         src={item.image}
                         alt={item.title}
+                        loading="lazy"
+                        decoding="async"
                         className="w-full h-full object-cover object-center scale-100 group-hover:scale-105 transition-transform duration-500 ease-out"
                         referrerPolicy="no-referrer"
                       />

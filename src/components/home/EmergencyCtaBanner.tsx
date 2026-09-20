@@ -1,17 +1,11 @@
 import React, { useState } from 'react';
 import {
-  Phone,
   Calendar,
-  ArrowRight,
   ShieldCheck,
   Zap,
   CheckCircle2,
-  Clock,
-  AlertTriangle,
   X,
   PhoneCall,
-  Sparkles,
-  Wrench,
 } from 'lucide-react';
 import { SplitTextHover } from '../ui/SplitTextHover';
 
@@ -56,6 +50,8 @@ export const EmergencyCtaBanner: React.FC = () => {
               alt="Emergency Smart HVAC Precision Climate Control in Hand"
               className="w-full h-full object-contain mix-blend-multiply transition-transform duration-700 group-hover:scale-[1.015]"
               referrerPolicy="no-referrer"
+              loading="lazy"
+              decoding="async"
             />
 
             {/* Interactive Temperature Fine-Tuner Hover Chip on the dial */}
@@ -125,7 +121,6 @@ export const EmergencyCtaBanner: React.FC = () => {
             <span className="font-['Delight'] font-medium text-sm sm:text-base tracking-wide whitespace-nowrap">
               <SplitTextHover text="Book Rapid Service" />
             </span>
-            <ArrowRight className="w-4 h-4 text-zinc-400 group-hover:translate-x-0.5 transition-transform" />
           </button>
         </div>
 

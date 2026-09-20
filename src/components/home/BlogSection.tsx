@@ -186,6 +186,8 @@ export const BlogSection: React.FC = () => {
                     src={post.image}
                     alt={post.title}
                     referrerPolicy="no-referrer"
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
                   />
                   {/* Category Chip Overlaid */}
@@ -275,6 +277,8 @@ export const BlogSection: React.FC = () => {
                   <img
                     src={selectedPost.image}
                     alt={selectedPost.title}
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#1A1D21] via-[#1A1D21]/30 to-transparent" />

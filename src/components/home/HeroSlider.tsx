@@ -67,10 +67,10 @@ export const HeroSlider: React.FC = () => {
   return (
     <section
       id="hero-section"
-      className="relative w-full max-w-[100vw] min-h-screen bg-[#121417] pl-[10px] pr-[10px] sm:px-[20px] pt-[100px] sm:pt-[110px] lg:pt-[120px] pb-[50px] flex flex-col justify-between overflow-x-hidden"
+      className="relative w-full max-w-[100vw] min-h-screen bg-[#121417] px-2.5 sm:px-5 lg:px-6 pt-[100px] sm:pt-[110px] lg:pt-[120px] pb-[50px] flex flex-col justify-between overflow-x-hidden border-0 outline-none"
     >
       {/* Immersive Background with Subtle Zoom Entrance */}
-      <div className="absolute inset-0 z-0 overflow-hidden">
+      <div className="absolute inset-0 z-0 overflow-hidden border-0 outline-none">
         <div className="absolute inset-0 bg-black/55 z-10" />
         <motion.img
           initial={{ scale: 1.06, opacity: 0.8 }}
@@ -78,7 +78,7 @@ export const HeroSlider: React.FC = () => {
           transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
           src="/owner-by-van.webp"
           alt="Preferred Air Owner standing by company van"
-          className="w-full h-full object-cover object-[70%_center] sm:object-center select-none pointer-events-none"
+          className="w-full h-full object-cover object-[70%_center] sm:object-center select-none pointer-events-none border-0 outline-none"
           referrerPolicy="no-referrer"
           loading="eager"
           decoding="async"
@@ -86,7 +86,7 @@ export const HeroSlider: React.FC = () => {
       </div>
 
       {/* BOTTOM ROW: Split Grid Layout */}
-      <div className="relative z-20 w-full mt-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-start justify-items-start lg:items-end pb-2 sm:pb-4 lg:pb-6">
+      <div className="relative z-20 w-full mt-auto grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start justify-items-stretch lg:justify-items-start lg:items-end pb-2 sm:pb-4 lg:pb-6">
         
         {/* Left Column: Headline, Discover Action, & GSAP Animated Counters */}
         <motion.div
@@ -95,7 +95,7 @@ export const HeroSlider: React.FC = () => {
           transition={{ duration: 0.9, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
           className="lg:col-span-7 flex flex-col items-start text-left space-y-4 lg:space-y-5 w-full"
         >
-          <div className="space-y-1.5">
+          <div className="space-y-1.5 w-full">
             <p className="text-[11px] sm:text-xs font-subheading uppercase tracking-[0.22em] text-[#ECEDEF]/80 font-normal">
               Experience the preferred air difference.
             </p>
@@ -104,10 +104,10 @@ export const HeroSlider: React.FC = () => {
             </h1>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3.5">
+          <div className="flex flex-wrap items-center gap-3.5 w-full">
             <a
               href="#finance"
-              className="bg-[#ECEDEF] text-[#121417] hover:bg-white hover:text-[#121417] pl-6 pr-2 py-2 rounded-none text-xs font-nohemi font-bold uppercase tracking-wider transition-all duration-300 cursor-pointer shadow-md active:scale-98 flex items-center gap-3"
+              className="bg-[#ECEDEF] text-[#121417] hover:bg-white hover:text-[#121417] pl-6 pr-2 py-2 rounded-none text-xs font-nohemi font-bold uppercase tracking-wider transition-all duration-300 cursor-pointer shadow-md active:scale-98 flex items-center justify-between sm:justify-start gap-3"
             >
               <span>Financing Offers</span>
               <span className="w-7 h-7 rounded-none bg-[#121417] text-white flex items-center justify-center shrink-0">
@@ -117,7 +117,7 @@ export const HeroSlider: React.FC = () => {
 
             <a
               href="tel:18005550199"
-              className="bg-transparent text-white hover:bg-white/10 border border-white/20 pl-6 pr-2 py-2 rounded-none text-xs font-nohemi font-bold uppercase tracking-wider transition-all duration-300 cursor-pointer active:scale-98 flex items-center gap-3"
+              className="bg-transparent text-white hover:bg-white/10 border border-white/20 pl-6 pr-2 py-2 rounded-none text-xs font-nohemi font-bold uppercase tracking-wider transition-all duration-300 cursor-pointer active:scale-98 flex items-center justify-between sm:justify-start gap-3"
             >
               <span>Call Us Today</span>
               <span className="w-7 h-7 rounded-none bg-white text-[#121417] flex items-center justify-center shrink-0">
@@ -127,7 +127,7 @@ export const HeroSlider: React.FC = () => {
           </div>
 
           {/* GSAP Clean Number Counter */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-5 pt-3 border-t border-white/15 w-full max-w-[480px] mt-1 sm:mt-2">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-5 pt-3 border-t border-white/15 w-full lg:max-w-[480px] mt-1 sm:mt-2">
             <CounterItem endVal={2400} useComma suffix="+" label="Jobs done" delay={0.1} />
             <CounterItem endVal={4.9} decimals={1} suffix="★" label="Rating" delay={0.2} />
             <CounterItem endVal={47} suffix=" min" label="Response" delay={0.3} />
@@ -135,12 +135,12 @@ export const HeroSlider: React.FC = () => {
           </div>
         </motion.div>
 
-        {/* Right Column: Dynamic Hvac Pricing Estimator Card - elevated */}
+        {/* Right Column: Dynamic Hvac Pricing Estimator Card - placed at the bottom */}
         <motion.div
           initial={{ opacity: 0, y: 35, scale: 0.98 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ duration: 1.0, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-          className="lg:col-span-5 w-full max-w-md ml-0 lg:ml-auto relative lg:-translate-y-6 xl:-translate-y-10"
+          className="lg:col-span-5 w-full max-w-full lg:max-w-md ml-0 lg:ml-auto relative self-end mt-auto translate-y-0 mb-0"
         >
           <HvacPricingEstimator />
         </motion.div>

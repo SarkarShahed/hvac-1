@@ -1,4 +1,4 @@
-import React, { Suspense, lazy } from 'react';
+import { Suspense, lazy } from 'react';
 import { Navbar, Footer } from './components/layout';
 import { GridPageTransition } from './components/common/GridPageTransition';
 import { HeroSlider } from './components/home/HeroSlider';
@@ -48,7 +48,7 @@ export default function App() {
       {/* Global Sticky Navbar */}
       <Navbar />
 
-      <div className="w-full min-h-screen flex flex-col bg-slate-50 text-zinc-900 overflow-x-hidden">
+      <div className="w-full min-h-screen flex flex-col bg-[#121417] text-white overflow-x-hidden border-0 outline-none">
         {/* Main Content Area */}
         <main className="flex-1 w-full max-w-[100vw] flex flex-col items-center justify-start p-0 m-0">
           {/* 1. Cinematic Hero with Instant Cost Estimator (Critical LCP - Eager) */}

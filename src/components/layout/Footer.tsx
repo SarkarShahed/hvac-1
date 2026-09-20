@@ -6,14 +6,10 @@ import {
   Twitter,
   Youtube,
   Phone,
-  Mail,
   ShieldCheck,
   CheckCircle2,
   X,
-  ExternalLink,
   Sliders,
-  Sparkles,
-  ArrowUpRight,
 } from 'lucide-react';
 import { SplitTextHover } from '../ui/SplitTextHover';
 
@@ -164,9 +160,11 @@ export const Footer: React.FC = () => {
             {/* Left Headline */}
             <div className="space-y-3 text-left">
               <img
-                src="/Preferred-Air 1.png"
+                src="/Preferred-Air-1.png"
                 alt="Preferred Air"
                 className="h-9 sm:h-11 w-auto object-contain cursor-pointer"
+                loading="lazy"
+                decoding="async"
               />
               <div className="space-y-1">
                 <h3 className="font-['Nohemi'] font-bold text-2xl sm:text-3xl lg:text-[38px] text-[#121417] tracking-tight leading-tight">

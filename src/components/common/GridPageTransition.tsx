@@ -4,64 +4,42 @@ import gsap from 'gsap';
 export const GridPageTransition: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const colsRef = useRef<(HTMLDivElement | null)[]>([]);
-  const [isAnimating, setIsAnimating] = useState(true);
+  const [isAnimating, setIsAnimating] = useState(false);
 
   // 12 Columns Array
   const columns = Array.from({ length: 12 });
 
   useEffect(() => {
-    // Initial Page Entrance Transition: 12 Columns stagger up and away
-    const cols = colsRef.current.filter(Boolean);
-    
-    if (cols.length > 0) {
-      const tl = gsap.timeline({
-        onComplete: () => {
-          setIsAnimating(false);
-          if (containerRef.current) {
-            containerRef.current.style.pointerEvents = 'none';
-          }
-        },
-      });
-
-      // Stagger columns away smoothly on load
-      tl.to(cols, {
-        scaleY: 0,
-        transformOrigin: 'top',
-        stagger: {
-          amount: 0.35,
-          from: 'center',
-          ease: 'sine.inOut',
-        },
-        duration: 0.75,
-        ease: 'power3.inOut',
-        force3D: true,
-        delay: 0.1,
-      });
-    }
-
     // Custom Event Listener for dynamic route / page transitions
     const handleTriggerTransition = (e: Event) => {
       const customEvent = e as CustomEvent;
       const onCompleteCallback = customEvent.detail?.onComplete;
 
+      setIsAnimating(true);
       if (containerRef.current) {
+        containerRef.current.style.display = 'block';
         containerRef.current.style.pointerEvents = 'all';
       }
-      setIsAnimating(true);
 
       const cols = colsRef.current.filter(Boolean);
+      if (cols.length === 0) {
+        if (onCompleteCallback) onCompleteCallback();
+        setIsAnimating(false);
+        return;
+      }
+
       const tl = gsap.timeline();
 
       // Wipe 12 columns down smoothly
-      tl.set(cols, { transformOrigin: 'bottom' })
+      tl.set(cols, { transformOrigin: 'bottom', scaleY: 0 })
         .to(cols, {
           scaleY: 1,
           stagger: {
-            amount: 0.3,
+            amount: 0.25,
             from: 'edges',
             ease: 'sine.inOut',
           },
-          duration: 0.65,
+          duration: 0.55,
           ease: 'power3.inOut',
           force3D: true,
         })
@@ -72,11 +50,11 @@ export const GridPageTransition: React.FC = () => {
         .to(cols, {
           scaleY: 0,
           stagger: {
-            amount: 0.35,
+            amount: 0.25,
             from: 'center',
             ease: 'sine.inOut',
           },
-          duration: 0.75,
+          duration: 0.6,
           ease: 'power3.inOut',
           force3D: true,
         })
@@ -84,6 +62,7 @@ export const GridPageTransition: React.FC = () => {
           setIsAnimating(false);
           if (containerRef.current) {
             containerRef.current.style.pointerEvents = 'none';
+            containerRef.current.style.display = 'none';
           }
         });
     };
@@ -126,9 +105,11 @@ export const GridPageTransition: React.FC = () => {
   return (
     <div
       ref={containerRef}
+      style={{ display: isAnimating ? 'block' : 'none' }}
       className={`fixed inset-0 z-[99999] pointer-events-none overflow-hidden ${
-        isAnimating ? 'pointer-events-auto' : ''
+        isAnimating ? 'pointer-events-auto' : 'hidden'
       }`}
+      aria-hidden={!isAnimating}
     >
       {/* 12 Columns Grid overlay in Color #2934CE */}
       <div className="w-full h-full grid grid-cols-12 gap-0 relative">
@@ -138,7 +119,7 @@ export const GridPageTransition: React.FC = () => {
             ref={(el) => {
               colsRef.current[idx] = el;
             }}
-            className="h-full bg-[#2934ce] border-r border-white/5 transform-gpu scale-y-100 origin-top"
+            className="h-full bg-[#2934ce] transform-gpu scale-y-0 origin-top"
             style={{
               willChange: 'transform',
             }}

@@ -100,7 +100,9 @@ body {
   padding: 0;
   overflow-x: hidden;
   box-sizing: border-box;
-  background-color: #ffffff;
+  background-color: #121417;
+  border: 0;
+  outline: none;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
@@ -231,9 +233,11 @@ button:hover .split-text-line-2 .split-text-char,
   transform: translateY(0%);
 }
 
-/* Performance & Low-Network Rendering Optimizations */
+/* Explicit image and media normalization to prevent initial load placeholder box / borders */
 img {
-  content-visibility: auto;
+  border: 0 !important;
+  border-style: none !important;
+  outline: none !important;
 }
 
 #service-area-globe-section,

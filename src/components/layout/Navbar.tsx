@@ -42,7 +42,7 @@ export const Navbar: React.FC = () => {
   // Mega Menu Data for Services
   const servicesMegaMenu = [
     {
-      category: '❄️ Cooling (AC)',
+      category: 'Cooling (AC)',
       items: [
         'AC Repair',
         'AC Installation',
@@ -57,7 +57,7 @@ export const Navbar: React.FC = () => {
       ]
     },
     {
-      category: '🔥 Heating',
+      category: 'Heating',
       items: [
         'Furnace Repair',
         'Furnace Installation',
@@ -71,7 +71,7 @@ export const Navbar: React.FC = () => {
       ]
     },
     {
-      category: '💨 Ventilation / Air Quality',
+      category: 'Ventilation / Air Quality',
       items: [
         'Duct Cleaning',
         'Duct Repair / Sealing',
@@ -86,7 +86,7 @@ export const Navbar: React.FC = () => {
       ]
     },
     {
-      category: '🔧 System-Specific',
+      category: 'System-Specific',
       items: [
         'Mini-Split Installation',
         'Mini-Split Repair',
@@ -99,7 +99,7 @@ export const Navbar: React.FC = () => {
       ]
     },
     {
-      category: '🚨 Emergency Services',
+      category: 'Emergency Services',
       items: [
         '24/7 Emergency AC Repair',
         '24/7 Emergency Heating Repair',
@@ -110,7 +110,7 @@ export const Navbar: React.FC = () => {
       ]
     },
     {
-      category: '🛡️ Maintenance Plans',
+      category: 'Maintenance Plans',
       items: [
         'Annual AC Tune-up Plan',
         'Annual Heating Tune-up Plan',
@@ -124,7 +124,7 @@ export const Navbar: React.FC = () => {
   // Mega Menu Data for About Us
   const aboutMegaMenu = [
     {
-      category: '🏢 Company Profile',
+      category: 'Company Profile',
       items: [
         'Our Company',
         'Why Us',
@@ -134,7 +134,7 @@ export const Navbar: React.FC = () => {
       ]
     },
     {
-      category: '⭐ Licensing & Standards',
+      category: 'Licensing & Standards',
       items: [
         'HVAC License ROC #349892',
         'Verified Customer Reviews',
@@ -294,9 +294,12 @@ export const Navbar: React.FC = () => {
             className="flex items-center select-none cursor-pointer group"
           >
             <img
-              src="/Preferred-Air 1.png"
+              src="/Preferred-Air-1.png"
               alt="Preferred Air"
-              className="h-10 sm:h-12 lg:h-[50px] w-auto max-w-[160px] sm:max-w-[190px] lg:max-w-[215px] object-contain transition-transform duration-200 group-hover:scale-105 filter drop-shadow-md"
+              className="h-10 sm:h-12 lg:h-[50px] w-auto max-w-[160px] sm:max-w-[190px] lg:max-w-[215px] object-contain transition-transform duration-200 group-hover:scale-105 filter drop-shadow-md border-0 outline-none"
+              loading="eager"
+              decoding="async"
+              style={{ border: 'none', outline: 'none' }}
             />
           </div>
         </div>
@@ -387,7 +390,7 @@ export const Navbar: React.FC = () => {
             >
               <div className="flex items-center justify-between pb-3 mb-4 border-b border-white/20">
                 <span className="font-['Nohemi'] font-bold text-sm sm:text-base uppercase tracking-wider text-white">
-                  {activeMegaMenu === 'services' ? '❄️ Comprehensive HVAC Services Directory' : '🏢 Preferred Air Company Profile & Standards'}
+                  {activeMegaMenu === 'services' ? 'Comprehensive HVAC Services Directory' : 'Preferred Air Company Profile & Standards'}
                 </span>
                 <button
                   type="button"
@@ -402,7 +405,7 @@ export const Navbar: React.FC = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                   {servicesMegaMenu.map((group, idx) => (
                     <div key={idx} className="space-y-2">
-                      <h4 className="font-['Nohemi'] font-bold text-xs tracking-wide text-[#2934ce] pb-1 border-b border-white/15">
+                      <h4 className="font-['Nohemi'] font-bold text-xs tracking-wider text-white uppercase pb-1 border-b border-white/15">
                         {group.category}
                       </h4>
                       <ul className="space-y-1.5">
@@ -430,7 +433,7 @@ export const Navbar: React.FC = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   {aboutMegaMenu.map((group, idx) => (
                     <div key={idx} className="space-y-2">
-                      <h4 className="font-['Nohemi'] font-bold text-xs tracking-wide text-[#2934ce] pb-1 border-b border-white/15">
+                      <h4 className="font-['Nohemi'] font-bold text-xs tracking-wider text-white uppercase pb-1 border-b border-white/15">
                         {group.category}
                       </h4>
                       <ul className="space-y-2">
@@ -470,9 +473,9 @@ export const Navbar: React.FC = () => {
           <button
             type="button"
             onClick={() => setMobileMenuOpen(true)}
-            className="h-[45px] px-5 bg-[#121417]/90 backdrop-blur-md rounded-none border border-white/10 text-[10px] font-['Nohemi'] font-bold text-white uppercase tracking-wider flex items-center justify-center cursor-pointer hover:bg-[#121417] transition-colors"
+            className="h-[45px] px-5 bg-[#121417]/90 backdrop-blur-md rounded-none border border-white/10 text-[10px] font-['Nohemi'] font-bold text-white uppercase tracking-widest flex items-center justify-center cursor-pointer hover:bg-[#121417] transition-colors"
           >
-            Menu
+            MENU
           </button>
         </div>
       </nav>
@@ -494,9 +497,11 @@ export const Navbar: React.FC = () => {
             ) : (
               <div className="flex items-center gap-2">
                 <img
-                  src="/Preferred-Air 1.png"
+                  src="/Preferred-Air-1.png"
                   alt="Preferred Air"
                   className="h-8 w-auto object-contain"
+                  loading="lazy"
+                  decoding="async"
                 />
               </div>
             )}
@@ -567,7 +572,7 @@ export const Navbar: React.FC = () => {
               <div className="flex items-center justify-between pb-3 border-b border-zinc-800 mb-3 shrink-0">
                 <div>
                   <h3 className="font-['Nohemi'] font-bold text-lg text-white uppercase tracking-wider flex items-center gap-2">
-                    <span>❄️ ALL HVAC SERVICES</span>
+                    <span>ALL HVAC SERVICES</span>
                   </h3>
                   <p className="font-['Delight'] text-xs text-zinc-400 mt-0.5">
                     Select any climate service to jump directly to details
@@ -578,7 +583,7 @@ export const Navbar: React.FC = () => {
               <div className="flex-1 overflow-y-auto space-y-4 pr-1 py-1">
                 {servicesMegaMenu.map((group, idx) => (
                   <div key={idx} className="bg-[#181C20] rounded-xl p-4 border border-zinc-800 space-y-2.5">
-                    <h4 className="font-['Nohemi'] font-bold text-sm text-[#2934ce] pb-1.5 border-b border-zinc-800/80">
+                    <h4 className="font-['Nohemi'] font-bold text-sm text-white uppercase tracking-wider pb-1.5 border-b border-zinc-800/80">
                       {group.category}
                     </h4>
                     <div className="grid grid-cols-1 gap-2">
@@ -610,7 +615,7 @@ export const Navbar: React.FC = () => {
               <div className="flex items-center justify-between pb-3 border-b border-zinc-800 mb-3 shrink-0">
                 <div>
                   <h3 className="font-['Nohemi'] font-bold text-lg text-white uppercase tracking-wider flex items-center gap-2">
-                    <span>🏢 ABOUT PREFERRED AIR</span>
+                    <span>ABOUT PREFERRED AIR</span>
                   </h3>
                   <p className="font-['Delight'] text-xs text-zinc-400 mt-0.5">
                     15+ years serving Phoenix Metro • License ROC #349892
@@ -621,7 +626,7 @@ export const Navbar: React.FC = () => {
               <div className="flex-1 overflow-y-auto space-y-4 pr-1 py-1">
                 {aboutMegaMenu.map((group, idx) => (
                   <div key={idx} className="bg-[#181C20] rounded-xl p-4 border border-zinc-800 space-y-2.5">
-                    <h4 className="font-['Nohemi'] font-bold text-sm text-[#2934ce] pb-1.5 border-b border-zinc-800/80">
+                    <h4 className="font-['Nohemi'] font-bold text-sm text-white uppercase tracking-wider pb-1.5 border-b border-zinc-800/80">
                       {group.category}
                     </h4>
                     <div className="grid grid-cols-1 gap-2">

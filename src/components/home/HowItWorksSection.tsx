@@ -130,6 +130,8 @@ export const HowItWorksSection: React.FC = () => {
                               <img
                                 src={step.image}
                                 alt={step.title}
+                                loading="lazy"
+                                decoding="async"
                                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                               />
                               <div className="absolute inset-0 bg-gradient-to-t from-[#2934ce]/60 via-transparent to-transparent opacity-80" />

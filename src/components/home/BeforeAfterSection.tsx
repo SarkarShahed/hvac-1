@@ -244,6 +244,8 @@ export const BeforeAfterSection: React.FC = () => {
           <img
             src={current.afterImg}
             alt={current.afterTitle}
+            loading="lazy"
+            decoding="async"
             className="w-full h-full object-cover object-center transition-opacity duration-500"
           />
           {/* Subtle cinematic gradient overlays for pristine readability */}
@@ -260,6 +262,8 @@ export const BeforeAfterSection: React.FC = () => {
           <img
             src={current.beforeImg}
             alt={current.beforeTitle}
+            loading="lazy"
+            decoding="async"
             className="w-full h-full object-cover object-center grayscale-[25%] contrast-105 brightness-90 transition-opacity duration-500"
           />
           {/* Darkening & vignette overlay */}
@@ -375,6 +379,8 @@ export const BeforeAfterSection: React.FC = () => {
                     <img
                       src={service.thumbImg}
                       alt={service.name}
+                      loading="lazy"
+                      decoding="async"
                       className="w-full h-full object-cover rounded-full"
                     />
                     {isSelected && (

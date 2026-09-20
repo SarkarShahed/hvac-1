@@ -5,34 +5,19 @@ import {
   Footprints,
   Train,
   Bike,
-  Search,
   Crosshair,
   Layers,
   Compass,
-  Volume2,
   PhoneCall,
-  Calendar,
-  Clock,
   Navigation,
-  ArrowRight,
-  ChevronRight,
   ChevronsRight,
   X,
   Plus,
   GripVertical,
   CheckCircle2,
-  AlertTriangle,
-  Flame,
-  Snowflake,
-  ShieldCheck,
   Send,
   MapPin,
-  ExternalLink,
-  Info,
-  Maximize2,
-  Minimize2,
   Radio,
-  SlidersHorizontal,
   ChevronDown,
   GalleryVerticalEnd,
   Minus
@@ -150,7 +135,6 @@ export const GeoMapSection: React.FC = () => {
   const mapRef = useRef<HTMLDivElement>(null);
   const [googleMap, setGoogleMap] = useState<any>(null);
   const [isMapLoaded, setIsMapLoaded] = useState(false);
-  const [mapError, setMapError] = useState<string | null>(null);
 
   // Travel Mode
   const [travelMode, setTravelMode] = useState<'DRIVING' | 'WALKING' | 'TRANSIT' | 'BICYCLING'>('DRIVING');
@@ -183,8 +167,6 @@ export const GeoMapSection: React.FC = () => {
   // Map view controls
   const [mapTypeId, setMapTypeId] = useState<string>('hybrid');
   const [is3DMode, setIs3DMode] = useState(false);
-  const [showTraffic, setShowTraffic] = useState(true);
-  const [trafficLayer, setTrafficLayer] = useState<any>(null);
 
   // UI Drawer / Modals
   const [isStepsDrawerOpen, setIsStepsDrawerOpen] = useState(false);
@@ -270,7 +252,6 @@ export const GeoMapSection: React.FC = () => {
         if (google.maps.TrafficLayer) {
           const traffic = new google.maps.TrafficLayer();
           traffic.setMap(map);
-          setTrafficLayer(traffic);
         }
 
         // Setup DirectionsRenderer
@@ -289,7 +270,6 @@ export const GeoMapSection: React.FC = () => {
       })
       .catch((err: any) => {
         console.warn('Google Maps Load Warning:', err);
-        setMapError('Google Maps initialized with fallback render.');
         setIsMapLoaded(true);
       });
 
@@ -756,27 +736,6 @@ export const GeoMapSection: React.FC = () => {
     }
   };
 
-  // Toggle Traffic
-  const toggleTraffic = () => {
-    const nextTraffic = !showTraffic;
-    setShowTraffic(nextTraffic);
-    if (trafficLayer) {
-      trafficLayer.setMap(nextTraffic && googleMap ? googleMap : null);
-    }
-  };
-
-  // Select Preset Hub
-  const selectPreset = (hub: PresetLocation, target: 'origin' | 'destination') => {
-    if (target === 'origin') {
-      setOriginText(hub.name);
-      setOriginCoords({ lat: hub.lat, lng: hub.lng });
-    } else {
-      setDestinationText(hub.name);
-      setDestinationCoords({ lat: hub.lat, lng: hub.lng });
-    }
-    setActiveInput(null);
-  };
-
   // Handle Booking form submit
   const handleBookingSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -848,7 +807,7 @@ export const GeoMapSection: React.FC = () => {
         />
 
         {/* Top-Left Floating Directions Card (Exact 1:1 Apple/Google Glass UI with Expand/Collapse) */}
-        <div className={`absolute top-2.5 left-2.5 sm:top-4 sm:left-4 z-30 w-[270px] xs:w-[300px] sm:w-full max-w-[270px] xs:max-w-[300px] sm:max-w-[380px] flex flex-col rounded-2xl sm:rounded-3xl bg-[#181C20]/95 backdrop-blur-2xl border border-white/15 text-white shadow-2xl overflow-hidden pointer-events-auto transition-all duration-300 ease-in-out ${
+        <div className={`absolute top-2.5 left-2.5 sm:top-4 sm:left-4 z-30 w-[calc(100%-20px)] sm:w-full max-w-[320px] xs:max-w-[340px] sm:max-w-[380px] flex flex-col rounded-2xl sm:rounded-3xl bg-[#181C20]/95 backdrop-blur-2xl border border-white/15 text-white shadow-2xl overflow-hidden pointer-events-auto transition-all duration-300 ease-in-out ${
           isCardCollapsed ? 'max-h-[64px] sm:max-h-[68px]' : 'max-h-[calc(100%-20px)]'
         }`}>
           {/* Card Header: Directions & Expand/Collapse Toggle & Reset & Modes */}
@@ -1429,20 +1388,26 @@ export const GeoMapSection: React.FC = () => {
 
       {/* Turn-by-Turn Navigation Steps Drawer */}
       {isStepsDrawerOpen && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex justify-end transition-all">
-          <div className="w-full max-w-md bg-[#181C20] border-l border-white/15 text-white h-full flex flex-col shadow-2xl animate-in slide-in-from-right duration-300">
+        <div
+          className="fixed inset-0 z-[120] bg-black/85 backdrop-blur-md flex justify-end transition-all"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setIsStepsDrawerOpen(false);
+          }}
+        >
+          <div className="w-full max-w-md bg-[#121417] sm:bg-[#181C20] border-l border-white/20 text-white h-full flex flex-col shadow-2xl animate-in slide-in-from-right duration-300 relative z-10">
             {/* Header */}
-            <div className="p-5 border-b border-white/10 flex items-center justify-between">
+            <div className="pt-6 sm:pt-5 px-5 pb-5 border-b border-white/10 flex items-center justify-between bg-[#121417] sm:bg-[#181C20]">
               <div>
-                <div className="text-xs text-white/50 uppercase font-medium">Route Navigation</div>
+                <div className="text-[11px] sm:text-xs text-white/60 uppercase font-medium tracking-wider">Route Navigation</div>
                 <h4 className="text-xl font-['Nohemi'] font-bold text-white">Turn-by-Turn Steps</h4>
-                <div className="text-xs text-blue-400 mt-0.5">
+                <div className="text-xs text-blue-400 mt-0.5 font-medium">
                   {activeRoute?.durationText} · {activeRoute?.distanceText}
                 </div>
               </div>
               <button
                 onClick={() => setIsStepsDrawerOpen(false)}
-                className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white cursor-pointer"
+                className="w-10 h-10 rounded-full bg-white/15 hover:bg-white/25 flex items-center justify-center text-white cursor-pointer active:scale-95 transition-all"
+                aria-label="Close turn-by-turn steps"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -1513,7 +1478,7 @@ export const GeoMapSection: React.FC = () => {
 
       {/* Contact & Dispatch Booking Modal */}
       {isContactModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[120] bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
           <div className="w-full max-w-lg bg-[#181C20] border border-white/15 rounded-3xl text-white shadow-2xl p-6 relative overflow-hidden">
             <button
               onClick={() => setIsContactModalOpen(false)}
@@ -1548,8 +1513,8 @@ export const GeoMapSection: React.FC = () => {
             ) : (
               <form onSubmit={handleBookingSubmit} className="space-y-4">
                 <div>
-                  <div className="inline-flex items-center gap-1.5 text-xs text-[#FE552F] font-bold uppercase mb-1">
-                    <Radio className="w-3.5 h-3.5 animate-pulse" />
+                  <div className="inline-flex items-center gap-1.5 text-xs text-white font-bold uppercase mb-1">
+                    <Radio className="w-3.5 h-3.5 animate-pulse text-[#FE552F]" />
                     <span>Instant HVAC Dispatch Booking</span>
                   </div>
                   <h3 className="text-2xl font-['Nohemi'] font-bold text-white">
