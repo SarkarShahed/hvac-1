@@ -164,6 +164,56 @@ const testimonialsData: Testimonial[] = [
     avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=200&q=80',
     platform: 'Google',
   },
+  {
+    id: 't-10',
+    author: 'Rebecca Martinez',
+    role: 'Homeowner & Interior Designer',
+    location: 'Camelback Foothills',
+    category: 'maintenance',
+    categoryLabel: 'Whole-Home IAQ & Dehumidifier',
+    rating: 5,
+    date: '4 months ago',
+    title: 'Eliminated summer humidity and dust allergies completely',
+    review:
+      'Phoenix summers can feel heavy even indoors. They installed an ultra-efficient central dehumidifier paired with an electrostatic air purifier. Our indoor relative humidity stays strictly at 45%, and the air smells as crisp as mountain breeze.',
+    metric: 'Constant 45% RH Control',
+    systemInstalled: 'AprilAire Whole-Home Dehumidifier & IAQ',
+    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80',
+    platform: 'Google',
+  },
+  {
+    id: 't-11',
+    author: 'Kevin O\'Connor',
+    role: 'Property Operations Manager',
+    location: 'Arcadia Medical Center',
+    category: 'emergency',
+    categoryLabel: 'Critical HVAC Dispatch',
+    rating: 5,
+    date: '5 months ago',
+    title: 'Emergency server room cooling restored in under 40 minutes',
+    review:
+      'When our primary cleanroom server cooling unit threw an emergency high-pressure lock, Preferred Air’s emergency dispatch rerouted portable DX chillers within 40 minutes while their certified technician rebuilt the expansion valve.',
+    metric: 'Zero Server Downtime',
+    avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=200&q=80',
+    platform: 'Google',
+  },
+  {
+    id: 't-12',
+    author: 'Danielle Scott',
+    role: 'Homeowner',
+    location: 'Paradise Valley',
+    category: 'ac-heat-pump',
+    categoryLabel: 'Dual-Fuel Inverter System',
+    rating: 5,
+    date: '5 months ago',
+    title: 'Whisper-quiet comfort and 40% reduction in utility bills',
+    review:
+      'We replaced two aging 10 SEER rooftop units with side-discharge variable-speed inverter heat pumps. You literally cannot hear them running from 5 feet away. Our electric bills dropped dramatically even during peak July heat.',
+    systemInstalled: 'Bosch Premium IDS 2.0 Inverter Heat Pump',
+    metric: '40% Lower Electric Bills',
+    avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&q=80',
+    platform: 'Yelp',
+  },
 ];
 
 const categoryTabs = [
@@ -176,54 +226,63 @@ const categoryTabs = [
 
 export const TestimonialsSection: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>('all');
+  const [showAll, setShowAll] = useState<boolean>(false);
 
   const filteredTestimonials = useMemo(() => {
     if (activeTab === 'all') return testimonialsData;
     return testimonialsData.filter((item) => item.category === activeTab);
   }, [activeTab]);
 
+  // Default view caps at 8 review cards
+  const displayedTestimonials = useMemo(() => {
+    if (showAll) return filteredTestimonials;
+    return filteredTestimonials.slice(0, 8);
+  }, [filteredTestimonials, showAll]);
+
+  const hasMore = filteredTestimonials.length > 8;
+
   return (
     <section
       id="testimonials"
       data-section="reviews"
-      className="w-full max-w-[100vw] bg-[#ECEDEF] pt-[128px] pb-20 md:pb-28 lg:pb-32 px-[20px] border-none rounded-none text-[#121417] scroll-mt-16"
+      className="w-full max-w-[100vw] bg-[#ECEDEF] pt-[100px] md:pt-[128px] pb-20 md:pb-28 lg:pb-32 px-[20px] border-none rounded-none text-[#121417] scroll-mt-16 select-none"
     >
       <div className="w-full max-w-[100vw] mx-auto">
         {/* Section Header */}
         <div className="w-full max-w-[100vw] flex flex-col md:flex-row md:items-end justify-between gap-8 mb-12 md:mb-16">
-          <div className="max-w-2xl">
+          <div className="max-w-2xl text-left">
             {/* Minimalist Top Tag */}
-            <div className="inline-block px-3 py-1 bg-[#121417] text-white text-[12px] font-['Rinter'] uppercase tracking-widest rounded-[8px] border-none mb-5">
+            <div className="inline-block px-3 py-1 bg-[#121417] text-white text-[12px] font-['Delight'] font-medium uppercase tracking-widest rounded-[8px] border-none mb-4">
               Verified Client Feedback
             </div>
 
-            <h2 className="text-3xl sm:text-4xl lg:text-[48px] font-['Nohemi'] font-bold text-[#121417] tracking-tight leading-[1.12] mb-4">
+            <h2 className="text-3xl sm:text-4xl lg:text-[48px] font-['Nohemi'] font-bold text-[#121417] tracking-tight leading-[1.12] mb-4 text-left">
               Real Stories. Measured Comfort.
             </h2>
 
-            <p className="text-zinc-600 font-['Rinter'] text-base md:text-lg leading-relaxed">
+            <p className="text-zinc-600 font-['Delight'] font-normal text-base md:text-lg leading-relaxed text-left">
               Read transparent feedback from over 2,400+ homeowners and facility operators across the metropolitan region who trust us with their heating and climate systems.
             </p>
           </div>
 
           {/* Rating Summary Block (8px rounded corners) */}
           <div className="bg-white p-6 rounded-[8px] border-none shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex items-center gap-6 shrink-0 self-start md:self-auto">
-            <div className="flex flex-col">
-              <span className="font-['SF_Pro'] font-bold text-4xl text-[#121417] leading-none">
+            <div className="flex flex-col text-left">
+              <span className="font-['Nohemi'] font-bold text-4xl text-[#121417] leading-none">
                 4.96
               </span>
-              <span className="font-['Rinter'] text-xs text-zinc-500 mt-1">out of 5.0</span>
+              <span className="font-['Delight'] font-normal text-xs text-zinc-500 mt-1">out of 5.0</span>
             </div>
 
             <div className="h-10 w-[1px] bg-zinc-200" />
 
-            <div className="flex flex-col">
+            <div className="flex flex-col text-left">
               <div className="flex items-center gap-1 text-[#22C55E]">
                 {[...Array(5)].map((_, i) => (
                   <Star key={i} className="w-4 h-4 fill-[#22C55E] stroke-[#22C55E]" />
                 ))}
               </div>
-              <span className="font-['Rinter'] text-xs text-zinc-600 font-medium mt-1">
+              <span className="font-['Delight'] font-medium text-xs text-zinc-600 mt-1">
                 2,480+ Verified Reviews
               </span>
             </div>
@@ -238,11 +297,14 @@ export const TestimonialsSection: React.FC = () => {
               <button
                 key={tab.id}
                 type="button"
-                onClick={() => setActiveTab(tab.id)}
-                className={`px-4 py-2 text-sm font-['Rinter'] transition-colors rounded-[8px] border-none cursor-pointer ${
+                onClick={() => {
+                  setActiveTab(tab.id);
+                  setShowAll(false);
+                }}
+                className={`px-4 py-2 text-sm font-['Delight'] transition-colors rounded-[8px] border-none cursor-pointer ${
                   isActive
                     ? 'bg-[#121417] text-white font-medium'
-                    : 'bg-white text-zinc-700 hover:bg-zinc-200'
+                    : 'bg-white text-zinc-700 hover:bg-zinc-200 font-normal'
                 }`}
               >
                 {tab.label}
@@ -254,14 +316,14 @@ export const TestimonialsSection: React.FC = () => {
         {/* Masonry-Style Grid Container (Columns layout with break-inside-avoid) */}
         <div className="w-full max-w-[100vw] columns-1 md:columns-2 lg:columns-3 xl:columns-4 gap-6 space-y-6">
           <AnimatePresence mode="popLayout">
-            {filteredTestimonials.map((item) => (
+            {displayedTestimonials.map((item) => (
               <motion.div
                 key={item.id}
                 layout
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.96 }}
-                transition={{ duration: 0.28, ease: 'easeOut' }}
+                transition={{ duration: 0.25, ease: 'easeOut' }}
                 onMouseMove={(e) => {
                   const rect = e.currentTarget.getBoundingClientRect();
                   e.currentTarget.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
@@ -303,10 +365,10 @@ export const TestimonialsSection: React.FC = () => {
                   }}
                 />
 
-                <div className="relative z-10">
+                <div className="relative z-10 text-left">
                   {/* Card Header: Service Tag & Star Rating */}
                   <div className="flex items-center justify-between gap-2 mb-4">
-                    <span className="px-2.5 py-0.5 bg-[#ECEDEF] text-[#121417] text-[11px] font-['Rinter'] uppercase tracking-wider rounded-[8px] border-none group-hover:bg-[#2934ce]/10 group-hover:text-[#2934ce] transition-colors">
+                    <span className="px-2.5 py-0.5 bg-[#ECEDEF] text-[#121417] text-[11px] font-['Delight'] font-medium uppercase tracking-wider rounded-[8px] border-none group-hover:bg-[#2934ce]/10 group-hover:text-[#2934ce] transition-colors">
                       {item.categoryLabel}
                     </span>
 
@@ -318,31 +380,31 @@ export const TestimonialsSection: React.FC = () => {
                   </div>
 
                   {/* Review Headline */}
-                  <h3 className="font-['SF_Pro'] font-bold text-lg text-[#121417] leading-snug mb-3">
+                  <h3 className="font-['Delight'] font-medium text-lg text-[#121417] leading-snug mb-3">
                     "{item.title}"
                   </h3>
 
-                  {/* Review Body (Rinter font) */}
-                  <p className="font-['Rinter'] text-zinc-600 text-[14.5px] leading-relaxed mb-5">
+                  {/* Review Body */}
+                  <p className="font-['Delight'] font-normal text-zinc-600 text-[14.5px] leading-relaxed mb-5">
                     {item.review}
                   </p>
 
                   {/* Highlights (if any) */}
                   {item.metric && (
-                    <div className="mb-5 inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 text-emerald-800 text-xs font-['Rinter'] font-medium rounded-[8px] border-none">
+                    <div className="mb-5 inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 text-emerald-800 text-xs font-['Delight'] font-medium rounded-[8px] border-none">
                       <ShieldCheck className="w-3.5 h-3.5 shrink-0 text-emerald-600" />
                       <span>{item.metric}</span>
                     </div>
                   )}
 
                   {item.systemInstalled && (
-                    <div className="mb-5 text-xs text-zinc-500 font-['Rinter']">
+                    <div className="mb-5 text-xs text-zinc-500 font-['Delight'] font-normal">
                       <span className="text-zinc-400">Equipment:</span> {item.systemInstalled}
                     </div>
                   )}
                 </div>
 
-                {/* Card Footer: User Info (SF Pro for Name, Rinter for details, Square Avatar) */}
+                {/* Card Footer: User Info */}
                 <div className="relative z-10 pt-4 border-t border-zinc-100 flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <img
@@ -351,19 +413,19 @@ export const TestimonialsSection: React.FC = () => {
                       referrerPolicy="no-referrer"
                       className="w-10 h-10 rounded-[8px] object-cover shrink-0 bg-zinc-200"
                     />
-                    <div>
-                      {/* Name in SF Pro */}
-                      <h4 className="font-['SF_Pro'] font-semibold text-sm text-[#121417] leading-tight">
+                    <div className="text-left">
+                      {/* Name */}
+                      <h4 className="font-['Delight'] font-medium text-sm text-[#121417] leading-tight">
                         {item.author}
                       </h4>
-                      {/* Role & Location in Rinter */}
-                      <p className="font-['Rinter'] text-xs text-zinc-500">
+                      {/* Role & Location */}
+                      <p className="font-['Delight'] font-normal text-xs text-zinc-500">
                         {item.role} · {item.location}
                       </p>
                     </div>
                   </div>
 
-                  <span className="text-[11px] font-['Rinter'] text-zinc-400">
+                  <span className="text-[11px] font-['Delight'] font-normal text-zinc-400">
                     {item.platform}
                   </span>
                 </div>
@@ -371,6 +433,22 @@ export const TestimonialsSection: React.FC = () => {
             ))}
           </AnimatePresence>
         </div>
+
+        {/* See More / Show Less Button */}
+        {hasMore && (
+          <div className="w-full flex justify-center items-center mt-12 md:mt-16">
+            <button
+              type="button"
+              onClick={() => setShowAll((prev) => !prev)}
+              className="group inline-flex items-center gap-3 px-8 py-3.5 bg-[#121417] hover:bg-[#2934ce] text-white font-['Nohemi'] font-bold text-xs uppercase tracking-wider rounded-[8px] shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer"
+            >
+              <span>{showAll ? 'Show Less Reviews' : `See More Reviews (${filteredTestimonials.length - 8} more)`}</span>
+              <span className="w-6 h-6 rounded-full bg-white/15 flex items-center justify-center transition-transform group-hover:translate-y-0.5">
+                <ArrowUpRight className={`w-3.5 h-3.5 transition-transform duration-300 ${showAll ? 'rotate-[225deg]' : 'rotate-45'}`} />
+              </span>
+            </button>
+          </div>
+        )}
       </div>
     </section>
   );

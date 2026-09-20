@@ -67,7 +67,7 @@ export const HeroSlider: React.FC = () => {
   return (
     <section
       id="hero-section"
-      className="relative w-full max-w-[100vw] min-h-screen bg-[#121417] p-5 sm:p-7 lg:p-8 pt-[100px] sm:pt-[110px] lg:pt-[120px] pb-8 lg:pb-10 flex flex-col justify-between overflow-x-hidden"
+      className="relative w-full max-w-[100vw] min-h-screen bg-[#121417] pl-[10px] pr-[10px] sm:px-[20px] pt-[100px] sm:pt-[110px] lg:pt-[120px] pb-[50px] flex flex-col justify-between overflow-x-hidden"
     >
       {/* Immersive Background with Subtle Zoom Entrance */}
       <div className="absolute inset-0 z-0 overflow-hidden">
@@ -78,7 +78,7 @@ export const HeroSlider: React.FC = () => {
           transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
           src="/owner-by-van.webp"
           alt="Preferred Air Owner standing by company van"
-          className="w-full h-full object-cover object-center"
+          className="w-full h-full object-cover object-[70%_center] sm:object-center select-none pointer-events-none"
           referrerPolicy="no-referrer"
           loading="eager"
           decoding="async"
@@ -86,14 +86,14 @@ export const HeroSlider: React.FC = () => {
       </div>
 
       {/* BOTTOM ROW: Split Grid Layout */}
-      <div className="relative z-20 w-full mt-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-end">
+      <div className="relative z-20 w-full mt-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-start justify-items-start lg:items-end pb-2 sm:pb-4 lg:pb-6">
         
         {/* Left Column: Headline, Discover Action, & GSAP Animated Counters */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
-          className="lg:col-span-7 flex flex-col items-start text-left space-y-4 lg:space-y-5"
+          className="lg:col-span-7 flex flex-col items-start text-left space-y-4 lg:space-y-5 w-full"
         >
           <div className="space-y-1.5">
             <p className="text-[11px] sm:text-xs font-subheading uppercase tracking-[0.22em] text-[#ECEDEF]/80 font-normal">
@@ -107,20 +107,20 @@ export const HeroSlider: React.FC = () => {
           <div className="flex flex-wrap items-center gap-3.5">
             <a
               href="#finance"
-              className="bg-[#ECEDEF] text-[#121417] hover:bg-white hover:text-[#121417] pl-6 pr-2 py-2 rounded-full text-xs font-nohemi font-bold uppercase tracking-wider transition-all duration-300 cursor-pointer shadow-md active:scale-98 flex items-center gap-3"
+              className="bg-[#ECEDEF] text-[#121417] hover:bg-white hover:text-[#121417] pl-6 pr-2 py-2 rounded-none text-xs font-nohemi font-bold uppercase tracking-wider transition-all duration-300 cursor-pointer shadow-md active:scale-98 flex items-center gap-3"
             >
               <span>Financing Offers</span>
-              <span className="w-7 h-7 rounded-full bg-[#121417] text-white flex items-center justify-center shrink-0">
+              <span className="w-7 h-7 rounded-none bg-[#121417] text-white flex items-center justify-center shrink-0">
                 <CalendarDays className="w-3.5 h-3.5" />
               </span>
             </a>
 
             <a
               href="tel:18005550199"
-              className="bg-transparent text-white hover:bg-white/10 border border-white/20 pl-6 pr-2 py-2 rounded-full text-xs font-nohemi font-bold uppercase tracking-wider transition-all duration-300 cursor-pointer active:scale-98 flex items-center gap-3"
+              className="bg-transparent text-white hover:bg-white/10 border border-white/20 pl-6 pr-2 py-2 rounded-none text-xs font-nohemi font-bold uppercase tracking-wider transition-all duration-300 cursor-pointer active:scale-98 flex items-center gap-3"
             >
               <span>Call Us Today</span>
-              <span className="w-7 h-7 rounded-full bg-white text-[#121417] flex items-center justify-center shrink-0">
+              <span className="w-7 h-7 rounded-none bg-white text-[#121417] flex items-center justify-center shrink-0">
                 <Phone className="w-3.5 h-3.5" />
               </span>
             </a>
@@ -135,17 +135,14 @@ export const HeroSlider: React.FC = () => {
           </div>
         </motion.div>
 
-        {/* Right Column: Dynamic Hvac Pricing Estimator Card */}
+        {/* Right Column: Dynamic Hvac Pricing Estimator Card - elevated */}
         <motion.div
           initial={{ opacity: 0, y: 35, scale: 0.98 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ duration: 1.0, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-          className="lg:col-span-5 w-full max-w-md ml-auto relative"
+          className="lg:col-span-5 w-full max-w-md ml-0 lg:ml-auto relative lg:-translate-y-6 xl:-translate-y-10"
         >
-          <div className="absolute -inset-1.5 bg-gradient-to-r from-white/15 to-transparent rounded-[24px] blur-lg opacity-75 pointer-events-none" />
-          <div className="relative z-10">
-            <HvacPricingEstimator />
-          </div>
+          <HvacPricingEstimator />
         </motion.div>
 
       </div>

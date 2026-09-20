@@ -100,84 +100,48 @@ const hvacServices: HvacServiceOption[] = [
 export const BeforeAfterSection: React.FC = () => {
   const [selectedServiceIndex, setSelectedServiceIndex] = useState<number>(0);
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const clipPathRef = useRef<SVGPathElement | null>(null);
-  const shadowPathRef = useRef<SVGPathElement | null>(null);
-  const linePathRef = useRef<SVGPathElement | null>(null);
+  const clippedLayerRef = useRef<HTMLDivElement | null>(null);
+  const lineRef = useRef<SVGLineElement | null>(null);
+  const shadowLineRef = useRef<SVGLineElement | null>(null);
   const handleRef = useRef<HTMLDivElement | null>(null);
   const microRingRef = useRef<HTMLDivElement | null>(null);
 
   const current = hvacServices[selectedServiceIndex] || hvacServices[0];
 
-  // Fluid physics engine ref driven by GSAP ticker (smooth organic wave without any glowing blur)
   const physics = useRef({
     targetX: 0.5,
     currentX: 0.5,
-    topX: 0.5,
-    bottomX: 0.5,
-    bend: 0,
-    velocity: 0,
     handleScale: 1,
-    handleRotation: 0,
     ringOpacity: 0,
-    lastClientX: 0,
-    lastTime: performance.now(),
     isDragging: false,
-    width: 1200,
-    height: 800,
   });
 
-  // Keep dimensions synced
-  useEffect(() => {
-    const updateDims = () => {
-      if (!containerRef.current) return;
-      const rect = containerRef.current.getBoundingClientRect();
-      physics.current.width = rect.width || window.innerWidth;
-      physics.current.height = rect.height || window.innerHeight;
-    };
-    updateDims();
-    window.addEventListener('resize', updateDims);
-    return () => window.removeEventListener('resize', updateDims);
-  }, []);
-
-  // Update curve and handle on each GSAP frame
+  // Smooth responsive ticker: percentage-based clip-path and handle positioning
   useEffect(() => {
     const p = physics.current;
 
     const tick = () => {
-      const w = p.width || 1200;
-      const h = p.height || 800;
+      // Linear lerp for silky smooth slider motion
+      p.currentX += (p.targetX - p.currentX) * 0.35;
+      const pct = (p.currentX * 100).toFixed(2);
 
-      // Elastic fluid lerp
-      p.currentX += (p.targetX - p.currentX) * 0.22;
-      p.topX += (p.currentX - p.topX) * 0.12;
-      p.bottomX += (p.currentX - p.bottomX) * 0.12;
+      if (clippedLayerRef.current) {
+        clippedLayerRef.current.style.clipPath = `polygon(0 0, ${pct}% 0, ${pct}% 100%, 0 100%)`;
+      }
 
-      const cx = p.currentX * w;
-      const cy = h * 0.5;
-      const tx = p.topX * w;
-      const bx = p.bottomX * w;
-      const b = p.bend;
+      if (lineRef.current) {
+        lineRef.current.setAttribute('x1', `${pct}%`);
+        lineRef.current.setAttribute('x2', `${pct}%`);
+      }
 
-      // Multi-point fluid cubic bezier S-curve
-      const cp1x = tx + (cx - tx) * 0.35 + b * 0.75;
-      const cp1y = cy * 0.45;
-      const cp2x = cx + b * 0.9;
-      const cp2y = cy * 0.88;
-
-      const cp3x = cx + b * 0.9;
-      const cp3y = cy + (h - cy) * 0.12;
-      const cp4x = bx + (cx - bx) * 0.35 + b * 0.75;
-      const cp4y = cy + (h - cy) * 0.55;
-
-      const pathD = `M 0 0 L ${tx.toFixed(2)} 0 C ${cp1x.toFixed(2)} ${cp1y.toFixed(2)}, ${cp2x.toFixed(2)} ${cp2y.toFixed(2)}, ${cx.toFixed(2)} ${cy.toFixed(2)} C ${cp3x.toFixed(2)} ${cp3y.toFixed(2)}, ${cp4x.toFixed(2)} ${cp4y.toFixed(2)}, ${bx.toFixed(2)} ${h} L 0 ${h} Z`;
-      const lineD = `M ${tx.toFixed(2)} 0 C ${cp1x.toFixed(2)} ${cp1y.toFixed(2)}, ${cp2x.toFixed(2)} ${cp2y.toFixed(2)}, ${cx.toFixed(2)} ${cy.toFixed(2)} C ${cp3x.toFixed(2)} ${cp3y.toFixed(2)}, ${cp4x.toFixed(2)} ${cp4y.toFixed(2)}, ${bx.toFixed(2)} ${h}`;
-
-      if (clipPathRef.current) clipPathRef.current.setAttribute('d', pathD);
-      if (shadowPathRef.current) shadowPathRef.current.setAttribute('d', lineD);
-      if (linePathRef.current) linePathRef.current.setAttribute('d', lineD);
+      if (shadowLineRef.current) {
+        shadowLineRef.current.setAttribute('x1', `${pct}%`);
+        shadowLineRef.current.setAttribute('x2', `${pct}%`);
+      }
 
       if (handleRef.current) {
-        handleRef.current.style.transform = `translate3d(${cx.toFixed(2)}px, ${cy.toFixed(2)}px, 0) translate(-50%, -50%) scale(${p.handleScale.toFixed(3)}) rotate(${p.handleRotation.toFixed(2)}deg)`;
+        handleRef.current.style.left = `${pct}%`;
+        handleRef.current.style.transform = `translate(-50%, -50%) scale(${p.handleScale.toFixed(3)})`;
       }
 
       if (microRingRef.current) {
@@ -192,12 +156,10 @@ export const BeforeAfterSection: React.FC = () => {
   const handleDragStart = useCallback((clientX: number) => {
     const p = physics.current;
     p.isDragging = true;
-    p.lastClientX = clientX;
-    p.lastTime = performance.now();
 
     if (containerRef.current) {
       const rect = containerRef.current.getBoundingClientRect();
-      const norm = Math.max(0.02, Math.min(0.98, (clientX - rect.left) / rect.width));
+      const norm = Math.max(0.01, Math.min(0.99, (clientX - rect.left) / rect.width));
       p.targetX = norm;
     }
 
@@ -215,27 +177,8 @@ export const BeforeAfterSection: React.FC = () => {
     if (!p.isDragging || !containerRef.current) return;
 
     const rect = containerRef.current.getBoundingClientRect();
-    const norm = Math.max(0.02, Math.min(0.98, (clientX - rect.left) / rect.width));
+    const norm = Math.max(0.01, Math.min(0.99, (clientX - rect.left) / rect.width));
     p.targetX = norm;
-
-    const now = performance.now();
-    const dt = Math.max(12, now - p.lastTime);
-    const dx = clientX - p.lastClientX;
-    p.velocity = dx / dt;
-    p.lastClientX = clientX;
-    p.lastTime = now;
-
-    // Subtle natural bend proportional to drag velocity
-    const targetBend = -Math.max(-70, Math.min(70, dx * 2.8));
-    const targetRotation = Math.max(-20, Math.min(20, dx * 1.2));
-
-    gsap.to(p, {
-      bend: targetBend,
-      handleRotation: targetRotation,
-      duration: 0.12,
-      ease: 'power1.out',
-      overwrite: 'auto',
-    });
   }, []);
 
   const handleDragEnd = useCallback(() => {
@@ -243,19 +186,10 @@ export const BeforeAfterSection: React.FC = () => {
     if (!p.isDragging) return;
     p.isDragging = false;
 
-    // Fluid elastic bounce back to precision straight vertical
-    gsap.to(p, {
-      bend: 0,
-      duration: 1.1,
-      ease: 'elastic.out(1.15, 0.4)',
-      overwrite: 'auto',
-    });
-
     gsap.to(p, {
       handleScale: 1,
-      handleRotation: 0,
       ringOpacity: 0,
-      duration: 0.4,
+      duration: 0.3,
       ease: 'power2.out',
       overwrite: 'auto',
     });
@@ -272,28 +206,17 @@ export const BeforeAfterSection: React.FC = () => {
     };
   }, [handleDragEnd]);
 
-  // Clean, crisp transition when user switches HVAC service
+  // Clean transition when user switches HVAC service
   const handleSelectService = (index: number) => {
     setSelectedServiceIndex(index);
     const p = physics.current;
 
-    // Smooth subtle wave pulse
     gsap.fromTo(
       p,
-      { bend: -50 },
-      {
-        bend: 0,
-        duration: 1.1,
-        ease: 'elastic.out(1.1, 0.38)',
-        overwrite: 'auto',
-      }
-    );
-    gsap.fromTo(
-      p,
-      { handleScale: 1.12 },
+      { handleScale: 1.1 },
       {
         handleScale: 1,
-        duration: 0.5,
+        duration: 0.35,
         ease: 'power2.out',
         overwrite: 'auto',
       }
@@ -303,27 +226,8 @@ export const BeforeAfterSection: React.FC = () => {
   return (
     <section
       id="before-after"
-      className="relative w-full max-w-[100vw] h-[100vh] min-h-[700px] max-h-[100vh] bg-[#121417] text-white overflow-hidden flex flex-col justify-between select-none"
+      className="relative w-full max-w-[100vw] h-screen min-h-[600px] lg:h-[100vh] bg-[#121417] text-white overflow-hidden flex flex-col justify-between select-none"
     >
-      {/* SVG DEFINITION FOR PRECISION CLIP PATH (NO GLOW FILTERS) */}
-      <svg
-        className="absolute inset-0 w-full h-full pointer-events-none"
-        style={{ width: 0, height: 0, position: 'absolute' }}
-      >
-        <defs>
-          <clipPath id="fluid-hvac-clip" clipPathUnits="userSpaceOnUse">
-            <path ref={clipPathRef} d="M 0 0 L 600 0 L 600 800 L 0 800 Z" />
-          </clipPath>
-          <linearGradient id="luxury-hairline-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.25" />
-            <stop offset="15%" stopColor="#ffffff" stopOpacity="0.85" />
-            <stop offset="50%" stopColor="#ffffff" stopOpacity="1" />
-            <stop offset="85%" stopColor="#ffffff" stopOpacity="0.85" />
-            <stop offset="100%" stopColor="#ffffff" stopOpacity="0.25" />
-          </linearGradient>
-        </defs>
-      </svg>
-
       {/* WHOLE SCREEN FULL-BLEED BEFORE & AFTER COMPARISON SLIDER */}
       <div
         ref={containerRef}
@@ -335,7 +239,7 @@ export const BeforeAfterSection: React.FC = () => {
         onTouchEnd={handleDragEnd}
         className="absolute inset-0 w-full h-full overflow-hidden cursor-ew-resize select-none"
       >
-        {/* BASE LAYER: AFTER IMAGE (Fills entire screen) */}
+        {/* BASE LAYER: AFTER IMAGE (Fills entire viewport) */}
         <div className="absolute inset-0 w-full h-full pointer-events-none">
           <img
             src={current.afterImg}
@@ -347,10 +251,11 @@ export const BeforeAfterSection: React.FC = () => {
           <div className="absolute inset-0 bg-gradient-to-r from-[#121417]/75 via-transparent to-[#121417]/40 pointer-events-none" />
         </div>
 
-        {/* CLIPPED LAYER: BEFORE IMAGE WITH FLUID BEZIER CLIP */}
+        {/* CLIPPED LAYER: BEFORE IMAGE WITH PERCENTAGE POLYGON CLIP */}
         <div
+          ref={clippedLayerRef}
           className="absolute inset-0 w-full h-full pointer-events-none z-10"
-          style={{ clipPath: 'url(#fluid-hvac-clip)' }}
+          style={{ clipPath: 'polygon(0 0, 50% 0, 50% 100%, 0 100%)' }}
         >
           <img
             src={current.beforeImg}
@@ -362,44 +267,50 @@ export const BeforeAfterSection: React.FC = () => {
           <div className="absolute inset-0 bg-gradient-to-r from-[#121417]/75 via-transparent to-[#121417]/40 pointer-events-none" />
         </div>
 
-        {/* ULTRA-LUXURY CRISP HAIRLINE DIVIDER (NO NEON GLOW) */}
+        {/* ULTRA-LUXURY CRISP HAIRLINE DIVIDER LINE */}
         <svg className="absolute inset-0 w-full h-full pointer-events-none z-20 overflow-visible">
-          {/* Subtle soft micro-shadow behind the hairline for optical contrast across light/dark photography */}
-          <path
-            ref={shadowPathRef}
-            d="M 600 0 L 600 800"
-            fill="none"
-            stroke="rgba(0,0,0,0.4)"
+          {/* Soft micro-shadow behind hairline */}
+          <line
+            ref={shadowLineRef}
+            x1="50%"
+            y1="0%"
+            x2="50%"
+            y2="100%"
+            stroke="rgba(0,0,0,0.5)"
             strokeWidth="3"
-            strokeLinecap="round"
+            strokeLinecap="square"
           />
-          {/* Razor-sharp luxury white hairline */}
-          <path
-            ref={linePathRef}
-            d="M 600 0 L 600 800"
-            fill="none"
-            stroke="url(#luxury-hairline-gradient)"
+          {/* Sharp luxury white hairline */}
+          <line
+            ref={lineRef}
+            x1="50%"
+            y1="0%"
+            x2="50%"
+            y2="100%"
+            stroke="#ffffff"
             strokeWidth="1.5"
-            strokeLinecap="round"
+            strokeLinecap="square"
           />
         </svg>
 
-        {/* ULTRA-LUXURY PRECISION-MACHINED HANDLE (NO GLOWING ARTIFACTS) */}
+        {/* ULTRA-LUXURY PRECISION HANDLE */}
         <div
           ref={handleRef}
-          className="absolute top-0 left-0 pointer-events-auto cursor-ew-resize z-30 select-none group"
+          className="absolute top-1/2 pointer-events-auto cursor-ew-resize z-30 select-none group"
           style={{
-            willChange: 'transform',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            willChange: 'left, transform',
           }}
         >
-          {/* Hairline expansion ring on active interaction (pure crisp line, no blur) */}
+          {/* Hairline expansion ring on active interaction */}
           <div
             ref={microRingRef}
             className="absolute inset-0 -m-2 rounded-full border border-white/40 pointer-events-none transition-opacity duration-200"
             style={{ opacity: 0 }}
           />
 
-          {/* Luxury dual-tier dial: Frosted obsidian outer chassis with crisp chamfered border */}
+          {/* Luxury dual-tier dial: Frosted obsidian outer chassis */}
           <div className="relative w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#121417]/90 backdrop-blur-2xl border border-white/25 shadow-[0_12px_36px_rgba(0,0,0,0.85)] flex items-center justify-center transition-colors group-hover:border-white/50">
             {/* Center pure white disc */}
             <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white text-[#121417] flex items-center justify-center shadow-[0_2px_8px_rgba(0,0,0,0.3)] transition-transform group-hover:scale-105 group-active:scale-95">
@@ -410,34 +321,24 @@ export const BeforeAfterSection: React.FC = () => {
       </div>
 
       {/* TOP-LEFT INFORMATION HEADER & SERVICE DETAILS OVERLAY */}
-      <div className="relative z-30 p-6 sm:p-10 md:p-14 max-w-2xl pointer-events-none">
-        <div className="pointer-events-auto bg-white/85 backdrop-blur-[25px] p-6 sm:p-8 rounded-2xl border border-white/40 space-y-4 text-[#121417]">
-          {/* Service Code & Category */}
-          <div className="flex items-center gap-3">
-            <span className="px-2.5 py-1 rounded bg-[#121417] text-white text-[10px] font-mono tracking-widest uppercase border border-black/10">
-              {current.code}
-            </span>
-            <span className="text-[10px] sm:text-[11px] font-['Delight'] font-medium text-[#121417]/60 tracking-[0.2em] uppercase">
-              {current.category}
-            </span>
-          </div>
-
+      <div className="relative z-30 p-3 sm:p-6 md:p-10 max-w-2xl pointer-events-none">
+        <div className="pointer-events-auto bg-white/90 backdrop-blur-[25px] p-4 sm:p-7 rounded-xl sm:rounded-2xl border border-white/50 space-y-2 sm:space-y-4 text-[#121417] shadow-xl">
           {/* Service Display Name */}
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#121417] tracking-tight font-['Nohemi'] capitalize leading-tight">
+          <h1 className="text-xl sm:text-3xl md:text-5xl font-bold text-[#121417] tracking-tight font-['Nohemi'] capitalize leading-tight">
             {current.name}
           </h1>
 
           {/* Highlights */}
-          <p className="text-xs sm:text-sm text-[#121417]/80 font-['Delight'] font-normal leading-relaxed">
+          <p className="text-[11px] sm:text-sm text-[#121417]/85 font-['Delight'] font-normal leading-relaxed line-clamp-2 sm:line-clamp-none">
             {current.highlights}
           </p>
 
           {/* Architectural Specs Row */}
-          <div className="flex flex-wrap items-center gap-3 pt-2 text-[11px] sm:text-xs font-['Delight'] font-medium text-[#121417] uppercase border-0">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3 pt-1 text-[10px] sm:text-xs font-['Delight'] font-medium text-[#121417] uppercase border-0">
             {current.specs.map((spec, i) => (
               <React.Fragment key={spec.label}>
-                <div className="flex items-center gap-1.5">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-[#121417]" />
+                <div className="flex items-center gap-1">
+                  <CheckCircle2 className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#121417]" />
                   <span className="text-[#121417]/60">{spec.label}:</span>
                   <span className="font-semibold text-[#121417] tracking-wide">{spec.value}</span>
                 </div>
@@ -446,26 +347,6 @@ export const BeforeAfterSection: React.FC = () => {
                 )}
               </React.Fragment>
             ))}
-          </div>
-
-          {/* 4 Service Quick Pill Selectors */}
-          <div className="flex flex-wrap gap-2 pt-2">
-            {hvacServices.map((service, index) => {
-              const isSelected = selectedServiceIndex === index;
-              return (
-                <button
-                  key={service.id}
-                  onClick={() => handleSelectService(index)}
-                  className={`px-3.5 py-1 text-[10px] sm:text-[11px] font-medium tracking-wider uppercase rounded-full transition-all cursor-pointer border ${
-                    isSelected
-                      ? 'bg-[#121417] text-white border-[#121417] font-semibold'
-                      : 'bg-[#121417]/[0.06] hover:bg-[#121417]/[0.12] text-[#121417]/70 hover:text-[#121417] border-black/5'
-                  }`}
-                >
-                  {service.pillLabel}
-                </button>
-              );
-            })}
           </div>
         </div>
       </div>
@@ -487,7 +368,7 @@ export const BeforeAfterSection: React.FC = () => {
                   <div
                     className={`relative w-11 h-11 sm:w-14 sm:h-14 rounded-full overflow-hidden transition-all p-0.5 border ${
                       isSelected
-                        ? 'border-2 border-[#121417] scale-105'
+                        ? 'border-2 border-[#2934ce] scale-105'
                         : 'border-black/15 opacity-75 group-hover:opacity-100 group-hover:border-black/35'
                     }`}
                   >
@@ -497,14 +378,14 @@ export const BeforeAfterSection: React.FC = () => {
                       className="w-full h-full object-cover rounded-full"
                     />
                     {isSelected && (
-                      <div className="absolute inset-0 bg-[#121417]/20 flex items-center justify-center">
-                        <div className="w-1.5 h-1.5 rounded-full bg-[#121417]" />
+                      <div className="absolute inset-0 bg-[#2934ce]/20 flex items-center justify-center">
+                        <div className="w-1.5 h-1.5 rounded-full bg-[#2934ce]" />
                       </div>
                     )}
                   </div>
                   <span
                     className={`text-[9px] sm:text-[10px] font-['Delight'] font-medium tracking-wider uppercase mt-1.5 text-center leading-tight line-clamp-1 max-w-[65px] sm:max-w-[85px] ${
-                      isSelected ? 'text-[#121417] font-semibold' : 'text-[#121417]/70 group-hover:text-[#121417]'
+                      isSelected ? 'text-[#2934ce] font-semibold' : 'text-[#121417]/70 group-hover:text-[#121417]'
                     }`}
                   >
                     {service.pillLabel}
@@ -515,11 +396,11 @@ export const BeforeAfterSection: React.FC = () => {
           </div>
         </div>
 
-        {/* Action Button: Luxury obsidian & white aesthetic */}
+        {/* Action Button with requested #2934ce background color */}
         <button
           type="button"
           onClick={() => document.getElementById('hvac-dynamic-pricing-estimator')?.scrollIntoView({ behavior: 'smooth' })}
-          className="mt-3.5 px-6 py-2.5 sm:px-7 sm:py-3 bg-[#121417] hover:bg-black text-white text-[11px] sm:text-xs font-bold tracking-[0.14em] uppercase rounded-full transition-all active:scale-[0.98] flex items-center justify-center gap-2.5 cursor-pointer border border-black/10 select-none group"
+          className="mt-3.5 px-6 py-2.5 sm:px-7 sm:py-3 bg-[#2934ce] hover:bg-[#1f28aa] text-white text-[11px] sm:text-xs font-bold tracking-[0.14em] uppercase rounded-full transition-all active:scale-[0.98] flex items-center justify-center gap-2.5 cursor-pointer border border-[#2934ce]/20 shadow-lg select-none group"
         >
           <span>Schedule Appointment</span>
           <CalendarDays className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white shrink-0 transition-transform group-hover:scale-110" />

@@ -11,6 +11,7 @@ import {
   X,
   PhoneCall,
   Sparkles,
+  Wrench,
 } from 'lucide-react';
 import { SplitTextHover } from '../ui/SplitTextHover';
 
@@ -58,7 +59,7 @@ export const EmergencyCtaBanner: React.FC = () => {
             />
 
             {/* Interactive Temperature Fine-Tuner Hover Chip on the dial */}
-            <div className="absolute top-4 right-4 sm:top-8 sm:right-12 bg-white/90 backdrop-blur-md px-3.5 py-2 rounded-xl shadow-lg border border-zinc-200/80 flex items-center gap-3">
+            <div className="absolute top-4 right-4 sm:top-8 sm:right-12 bg-white/90 backdrop-blur-md px-3.5 py-2 rounded-none shadow-lg border border-zinc-200/80 flex items-center gap-3">
               <div className="flex flex-col text-left">
                 <span className="text-[10px] uppercase font-['Delight'] font-semibold tracking-wider text-zinc-400">
                   Target Climate
@@ -71,7 +72,7 @@ export const EmergencyCtaBanner: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setTargetTemp((t) => Math.max(60, t - 1))}
-                  className="w-6 h-6 rounded-md bg-[#ECEDEF] hover:bg-zinc-300 text-[#121417] font-bold text-xs flex items-center justify-center transition-colors cursor-pointer"
+                  className="w-6 h-6 rounded-none bg-[#ECEDEF] hover:bg-zinc-300 text-[#121417] font-bold text-xs flex items-center justify-center transition-colors cursor-pointer"
                   title="Cool Down"
                 >
                   -
@@ -79,7 +80,7 @@ export const EmergencyCtaBanner: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setTargetTemp((t) => Math.min(82, t + 1))}
-                  className="w-6 h-6 rounded-md bg-[#ECEDEF] hover:bg-zinc-300 text-[#121417] font-bold text-xs flex items-center justify-center transition-colors cursor-pointer"
+                  className="w-6 h-6 rounded-none bg-[#ECEDEF] hover:bg-zinc-300 text-[#121417] font-bold text-xs flex items-center justify-center transition-colors cursor-pointer"
                   title="Warm Up"
                 >
                   +
@@ -105,7 +106,7 @@ export const EmergencyCtaBanner: React.FC = () => {
           <a
             id="emergency-cta-call-btn"
             href="tel:4805554822"
-            className="group w-full sm:w-auto min-w-[210px] h-[45px] inline-flex items-center justify-center gap-2.5 px-7 rounded-full bg-[#FE552F] text-white hover:bg-[#e04521] transition-all duration-200 shadow-md hover:shadow-lg hover:scale-[1.02] cursor-pointer"
+            className="group w-full sm:w-auto min-w-[210px] h-[45px] inline-flex items-center justify-center gap-2.5 px-7 rounded-none bg-[#FE552F] text-white hover:bg-[#e04521] transition-all duration-200 shadow-md hover:shadow-lg hover:scale-[1.02] cursor-pointer"
           >
             <PhoneCall className="w-4 h-4 stroke-[2.2] animate-bounce" />
             <span className="font-['Delight'] font-medium text-sm sm:text-base tracking-wide whitespace-nowrap">
@@ -118,7 +119,7 @@ export const EmergencyCtaBanner: React.FC = () => {
             id="emergency-cta-book-btn"
             type="button"
             onClick={() => setIsModalOpen(true)}
-            className="group w-full sm:w-auto min-w-[210px] h-[45px] inline-flex items-center justify-center gap-2 px-7 rounded-full bg-[#121417] text-white hover:bg-zinc-800 transition-all duration-200 shadow-md hover:shadow-lg hover:scale-[1.02] cursor-pointer"
+            className="group w-full sm:w-auto min-w-[210px] h-[45px] inline-flex items-center justify-center gap-2 px-7 rounded-none bg-[#121417] text-white hover:bg-zinc-800 transition-all duration-200 shadow-md hover:shadow-lg hover:scale-[1.02] cursor-pointer"
           >
             <Calendar className="w-4 h-4 text-zinc-300 stroke-[2]" />
             <span className="font-['Delight'] font-medium text-sm sm:text-base tracking-wide whitespace-nowrap">
@@ -129,19 +130,19 @@ export const EmergencyCtaBanner: React.FC = () => {
         </div>
 
         {/* Reassurance Trust Strip */}
-        <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-8 text-xs sm:text-sm font-['Delight'] text-zinc-500 pt-2 border-t border-zinc-100 w-full max-w-xl">
-          <div className="flex items-center gap-1.5">
-            <Zap className="w-4 h-4 text-[#FE552F]" />
+        <div className="flex flex-row flex-nowrap items-center justify-center gap-2 sm:gap-3 text-[10px] font-['Delight'] text-zinc-500 pt-2 border-t border-zinc-100 w-full max-w-xl overflow-x-auto whitespace-nowrap">
+          <div className="flex items-center gap-1 shrink-0">
+            <Zap className="w-3 h-3 text-[#FE552F]" />
             <span>Under 45-min arrival</span>
           </div>
-          <span className="text-zinc-300 hidden sm:inline">•</span>
-          <div className="flex items-center gap-1.5">
-            <ShieldCheck className="w-4 h-4 text-emerald-600" />
+          <span className="text-zinc-300">•</span>
+          <div className="flex items-center gap-1 shrink-0">
+            <ShieldCheck className="w-3 h-3 text-emerald-600" />
             <span>No overtime or holiday charges</span>
           </div>
-          <span className="text-zinc-300 hidden sm:inline">•</span>
-          <div className="flex items-center gap-1.5">
-            <CheckCircle2 className="w-4 h-4 text-blue-600" />
+          <span className="text-zinc-300">•</span>
+          <div className="flex items-center gap-1 shrink-0">
+            <CheckCircle2 className="w-3 h-3 text-blue-600" />
             <span>Fixed upfront pricing</span>
           </div>
         </div>
@@ -151,13 +152,13 @@ export const EmergencyCtaBanner: React.FC = () => {
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#121417]/60 backdrop-blur-sm animate-in fade-in duration-200">
           <div
-            className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-zinc-100 relative text-left"
+            className="bg-white rounded-none max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-zinc-100 relative text-left"
             onClick={(e) => e.stopPropagation()}
           >
             <button
               type="button"
               onClick={resetModal}
-              className="absolute top-5 right-5 p-2 rounded-full hover:bg-[#ECEDEF] text-zinc-400 hover:text-[#121417] transition-colors cursor-pointer"
+              className="absolute top-5 right-5 p-2 rounded-none hover:bg-[#ECEDEF] text-zinc-400 hover:text-[#121417] transition-colors cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
@@ -165,7 +166,7 @@ export const EmergencyCtaBanner: React.FC = () => {
             {!isSubmitted ? (
               <>
                 <div className="flex items-center gap-2.5 mb-2">
-                  <div className="w-8 h-8 rounded-full bg-[#FE552F]/10 text-[#FE552F] flex items-center justify-center shrink-0">
+                  <div className="w-8 h-8 rounded-none bg-[#FE552F]/10 text-[#FE552F] flex items-center justify-center shrink-0">
                     <Zap className="w-4 h-4" />
                   </div>
                   <h3 className="font-['Nohemi'] font-bold text-xl sm:text-2xl text-[#121417]">
@@ -192,7 +193,7 @@ export const EmergencyCtaBanner: React.FC = () => {
                           key={item.id}
                           type="button"
                           onClick={() => setIssueType(item.id)}
-                          className={`px-3 py-2.5 rounded-xl text-xs font-['Delight'] text-left transition-all border cursor-pointer ${
+                          className={`px-3 py-2.5 rounded-none text-xs font-['Delight'] text-left transition-all border cursor-pointer ${
                             issueType === item.id
                               ? 'bg-[#121417] text-white border-[#121417] font-medium'
                               : 'bg-[#ECEDEF] text-zinc-700 border-transparent hover:bg-zinc-200'
@@ -214,7 +215,7 @@ export const EmergencyCtaBanner: React.FC = () => {
                       placeholder="(480) 000-0000"
                       value={phoneInput}
                       onChange={(e) => setPhoneInput(e.target.value)}
-                      className="w-full px-4 py-3 rounded-xl border border-zinc-200 bg-white font-['Delight'] text-sm text-[#121417] focus:outline-none focus:ring-2 focus:ring-[#121417]"
+                      className="w-full px-4 py-3 rounded-none border border-zinc-200 bg-white font-['Delight'] text-sm text-[#121417] focus:outline-none focus:ring-2 focus:ring-[#121417]"
                     />
                   </div>
 
@@ -227,14 +228,14 @@ export const EmergencyCtaBanner: React.FC = () => {
                       placeholder="e.g. Scottsdale, Phoenix, Mesa..."
                       value={addressInput}
                       onChange={(e) => setAddressInput(e.target.value)}
-                      className="w-full px-4 py-3 rounded-xl border border-zinc-200 bg-white font-['Delight'] text-sm text-[#121417] focus:outline-none focus:ring-2 focus:ring-[#121417]"
+                      className="w-full px-4 py-3 rounded-none border border-zinc-200 bg-white font-['Delight'] text-sm text-[#121417] focus:outline-none focus:ring-2 focus:ring-[#121417]"
                     />
                   </div>
 
                   <div className="pt-2">
                     <button
                       type="submit"
-                      className="w-full py-3.5 px-6 rounded-full bg-[#FE552F] text-white font-['Delight'] font-medium text-sm sm:text-base hover:bg-[#e04521] transition-colors shadow-lg flex items-center justify-center gap-2 cursor-pointer"
+                      className="w-full py-3.5 px-6 rounded-none bg-[#FE552F] text-white font-['Delight'] font-medium text-sm sm:text-base hover:bg-[#e04521] transition-colors shadow-lg flex items-center justify-center gap-2 cursor-pointer"
                     >
                       <Zap className="w-4 h-4" />
                       <span>Confirm & Dispatch Tech Now</span>
@@ -244,7 +245,7 @@ export const EmergencyCtaBanner: React.FC = () => {
               </>
             ) : (
               <div className="py-6 text-center space-y-4">
-                <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto">
+                <div className="w-16 h-16 rounded-none bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto">
                   <CheckCircle2 className="w-8 h-8" />
                 </div>
                 <h3 className="font-['Nohemi'] font-bold text-2xl text-[#121417]">
@@ -254,7 +255,7 @@ export const EmergencyCtaBanner: React.FC = () => {
                   Our live dispatch coordinator is ringing{' '}
                   <strong className="text-[#121417]">{phoneInput}</strong> right now. Unit #402 is en route with an estimated arrival in <strong>32 minutes</strong>.
                 </p>
-                <div className="p-3 bg-[#ECEDEF] rounded-xl text-xs font-['Delight'] text-zinc-600 inline-block">
+                <div className="p-3 bg-[#ECEDEF] rounded-none text-xs font-['Delight'] text-zinc-600 inline-block">
                   Need immediate telephone assistance? Call{' '}
                   <a href="tel:4805554822" className="font-bold text-[#FE552F] underline">
                     (480) 555-HVAC
@@ -264,7 +265,7 @@ export const EmergencyCtaBanner: React.FC = () => {
                   <button
                     type="button"
                     onClick={resetModal}
-                    className="mt-4 px-6 py-2.5 rounded-full bg-[#121417] text-white text-xs font-['Delight'] font-medium hover:bg-zinc-800 transition-colors cursor-pointer"
+                    className="mt-4 px-6 py-2.5 rounded-none bg-[#121417] text-white text-xs font-['Delight'] font-medium hover:bg-zinc-800 transition-colors cursor-pointer"
                   >
                     Close Window
                   </button>

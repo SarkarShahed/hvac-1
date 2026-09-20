@@ -98,7 +98,7 @@ export const WelcomeSection: React.FC = () => {
                 <span
                   key={index}
                   ref={addToWordsRef}
-                  className={`inline-block mr-[0.3em] transition-all duration-75 will-change-transform ${
+                  className={`inline-block mr-[0.3em] transform-gpu will-change-[opacity,color] ${
                     isAccent ? 'font-medium' : ''
                   }`}
                 >

@@ -153,12 +153,12 @@ export const Footer: React.FC = () => {
   return (
     <footer
       id="site-footer"
-      className="w-full max-w-[100vw] bg-[#ECEDEF] px-[20px] py-6 sm:py-10 lg:py-14 flex flex-col items-center justify-center select-none"
+      className="w-full max-w-[100vw] bg-white p-0 border-none flex flex-col items-center justify-center select-none"
     >
       {/* Outer Card Container */}
-      <div className="w-full max-w-[100vw] rounded-[24px] sm:rounded-[32px] overflow-hidden bg-white shadow-sm border-0 border-none flex flex-col">
+      <div className="w-full max-w-[100vw] rounded-none overflow-hidden bg-white shadow-none border-0 border-none flex flex-col">
         {/* Crisp White Content Canvas */}
-        <div className="w-full max-w-[100vw] max-h-[100vh] border-0 border-none bg-white p-7 sm:p-12 lg:p-16 flex flex-col overflow-y-auto">
+        <div className="w-full max-w-[100vw] border-0 border-none bg-white p-7 sm:p-12 lg:p-16 flex flex-col rounded-none">
           {/* Top Header Row: Call to Action + Contact Email / Phone */}
           <div className="w-full flex flex-col md:flex-row md:items-start justify-between gap-8 pb-12 sm:pb-16 border-b border-zinc-100">
             {/* Left Headline */}

@@ -1,41 +1,152 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Search, X, Calendar, ArrowRight, ChevronDown, PhoneCall, Facebook, Instagram, Youtube, Store, Star } from 'lucide-react';
-import { MegaDropdown, MegaDropdownData } from './MegaDropdown';
-import { FullScreenDropdown } from './FullScreenDropdown';
-import { SplitTextHover } from '../ui/SplitTextHover';
+import React, { useState, useEffect, useRef } from 'react';
+import { Search, X, Calendar, ArrowRight, ArrowLeft, ChevronRight, PhoneCall, Facebook, Instagram, Youtube, Store, Star, Plus } from 'lucide-react';
+import gsap from 'gsap';
 
 interface NavItemConfig {
   id: string;
   name: string;
   href: string;
-  hasDropdown: boolean;
-  dropdownData?: MegaDropdownData;
 }
 
 export const Navbar: React.FC = () => {
-  const [activeDropdownKey, setActiveDropdownKey] = useState<string | null>(null);
-  const [isFullScreenMenuOpen, setIsFullScreenMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  
-  // Cache the last active dropdown data to allow smooth exit animations
-  const lastDropdownDataRef = useRef<MegaDropdownData | null>(null);
-
-  // Smart sticky header logic
-  const [isScrolled, setIsScrolled] = useState(false);
+  const [activeMegaMenu, setActiveMegaMenu] = useState<'services' | 'about' | null>(null);
+  const [mobileSubScreen, setMobileSubScreen] = useState<'main' | 'services' | 'about'>('main');
+  const megaMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 40);
-    };
+    if (activeMegaMenu && megaMenuRef.current) {
+      // Hardware-accelerated slide-down transform animation using GSAP with zero layout thrashing
+      gsap.fromTo(
+        megaMenuRef.current,
+        {
+          y: -18,
+          scaleY: 0.95,
+          opacity: 0,
+          transformOrigin: 'top right',
+        },
+        {
+          y: 0,
+          scaleY: 1,
+          opacity: 1,
+          duration: 0.3,
+          ease: 'power3.out',
+          force3D: true,
+        }
+      );
+    }
+  }, [activeMegaMenu]);
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  // Mega Menu Data for Services
+  const servicesMegaMenu = [
+    {
+      category: '❄️ Cooling (AC)',
+      items: [
+        'AC Repair',
+        'AC Installation',
+        'AC Replacement',
+        'AC Tune-up / Maintenance',
+        'AC Inspection',
+        'Refrigerant Recharge (Freon)',
+        'Compressor Repair',
+        'Condenser Coil Cleaning',
+        'Evaporator Coil Repair',
+        'Thermostat Installation'
+      ]
+    },
+    {
+      category: '🔥 Heating',
+      items: [
+        'Furnace Repair',
+        'Furnace Installation',
+        'Furnace Replacement',
+        'Heat Pump Repair',
+        'Heat Pump Installation',
+        'Boiler Repair',
+        'Boiler Installation',
+        'Radiant Heat Repair',
+        'Electric Baseboard Repair'
+      ]
+    },
+    {
+      category: '💨 Ventilation / Air Quality',
+      items: [
+        'Duct Cleaning',
+        'Duct Repair / Sealing',
+        'Duct Installation',
+        'Air Purifier Installation',
+        'Humidifier Installation',
+        'Dehumidifier Installation',
+        'UV Light System Installation',
+        'Ventilation Fan Repair',
+        'Fresh Air Intake Installation',
+        'Carbon Monoxide Detector Install'
+      ]
+    },
+    {
+      category: '🔧 System-Specific',
+      items: [
+        'Mini-Split Installation',
+        'Mini-Split Repair',
+        'Package Unit Repair',
+        'Package Unit Installation',
+        'Geothermal System Service',
+        'Zoning System Installation',
+        'Smart Thermostat Install (Nest, Ecobee)',
+        'Variable Speed System Install'
+      ]
+    },
+    {
+      category: '🚨 Emergency Services',
+      items: [
+        '24/7 Emergency AC Repair',
+        '24/7 Emergency Heating Repair',
+        'No Heat Emergency',
+        'No Cool Emergency',
+        'Gas Leak Detection',
+        'Frozen Pipe Related HVAC'
+      ]
+    },
+    {
+      category: '🛡️ Maintenance Plans',
+      items: [
+        'Annual AC Tune-up Plan',
+        'Annual Heating Tune-up Plan',
+        'Bi-annual HVAC Maintenance Plan',
+        'Filter Replacement Service',
+        'Priority Emergency Plan'
+      ]
+    }
+  ];
 
-  // Search Mock Database
+  // Mega Menu Data for About Us
+  const aboutMegaMenu = [
+    {
+      category: '🏢 Company Profile',
+      items: [
+        'Our Company',
+        'Why Us',
+        'Leadership & Team',
+        'Service Guarantees',
+        'Careers'
+      ]
+    },
+    {
+      category: '⭐ Licensing & Standards',
+      items: [
+        'HVAC License ROC #349892',
+        'Verified Customer Reviews',
+        'Safety & Compliance',
+        'Energy Efficiency Commitment'
+      ]
+    }
+  ];
+
+  // Search Database
   const searchItems = [
+    { name: 'Live GeoMap & Route Dispatch (Directions)', targetId: 'geomap' },
     { name: 'Air Conditioning Repair & Installs', targetId: 'major-services-slider-section' },
     { name: 'High Efficiency Heat Pumps', targetId: 'major-services-slider-section' },
     { name: 'Ductless Mini-Split Air Handlers', targetId: 'major-services-slider-section' },
@@ -51,190 +162,38 @@ export const Navbar: React.FC = () => {
     item.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // Exact Dropdown Structures designed to match Atlas 3-Column Visual Layout with authentic HVAC content
-  const servicesDropdownData: MegaDropdownData = {
-    title: 'HVAC Services',
-    ctaText: 'GET INSTANT ESTIMATE',
-    ctaHref: '#hero-section',
-    footerNote: 'NATE Certified Technicians • Upfront Guaranteed Pricing • 24/7 Rapid Response',
-    columns: [
-      {
-        category: 'COOLING & AC',
-        items: [
-          { name: 'AC Repair & Diagnostics', href: '#major-services-slider-section', badge: 'Same Day' },
-          { name: 'New AC System Installation', href: '#major-services-slider-section' },
-          { name: 'High-Efficiency Heat Pumps', href: '#major-services-slider-section' },
-          { name: '24/7 Emergency AC Service', href: '#emergency-cta-banner', badge: 'Urgent' },
-        ],
-      },
-      {
-        category: 'HEATING & DUCTS',
-        items: [
-          { name: 'Gas & Electric Furnaces', href: '#major-services-slider-section' },
-          { name: 'Ductless Mini-Split Systems', href: '#major-services-slider-section' },
-          { name: 'Duct Sealing & Airflow Balance', href: '#major-services-slider-section' },
-          { name: 'Seasonal Heating Tune-Ups', href: '#major-services-slider-section' },
-        ],
-      },
-      {
-        category: 'AIR QUALITY & CONTROLS',
-        items: [
-          { name: 'Indoor Air Quality Checkups', href: '#major-services-slider-section' },
-          { name: 'HEPA & UV Air Purifiers', href: '#major-services-slider-section' },
-          { name: 'Smart Thermostat Automation', href: '#major-services-slider-section' },
-          { name: 'Commercial & Light Business HVAC', href: '#major-services-slider-section' },
-        ],
-      },
-      {
-        category: 'PRICING & OFFERS',
-        items: [
-          { name: 'Instant Price Estimator', href: '#hero-section', badge: 'Interactive' },
-          { name: '0% APR Flexible Financing', href: '#finance', badge: '0% APR' },
-          { name: 'Utility & Federal Rebates', href: '#blog-section' },
-          { name: '100% Upfront Price Guarantee', href: '#before-after-section' },
-        ],
-      },
-    ],
-  };
-
-  const learnMoreDropdownData: MegaDropdownData = {
-    title: 'Learn More',
-    ctaText: 'Download Rebate Guide',
-    ctaHref: '#blog-section',
-    footerNote: 'Interactive Learning Guides • EPA & NATE Resource Hub',
-    columns: [
-      {
-        category: 'RESOURCES & GUIDES',
-        items: [
-          { name: "HVAC Homeowner's Guide", href: '#blog-section' },
-          { name: 'Heat Survival Routines', href: '#blog-section' },
-          { name: 'Pricing Estimator Guide', href: '#hero-section' },
-        ],
-      },
-      {
-        category: 'FEDERAL REBATES',
-        items: [
-          { name: 'Inflation Reduction Act (IRA)', href: '#blog-section', badge: 'Rebates' },
-          { name: 'Local Utility Incentives', href: '#blog-section' },
-          { name: 'Tax Credit Optimizers', href: '#blog-section' },
-        ],
-      },
-      {
-        category: 'WARRANTIES & PLANS',
-        items: [
-          { name: '10-Year Part Warranties', href: '#blog-section' },
-          { name: 'Preventative Maintenance Care', href: '#blog-section' },
-          { name: 'Our Comfort Guarantee', href: '#blog-section' },
-        ],
-      },
-    ],
-  };
-
-  const aboutUsDropdownData: MegaDropdownData = {
-    title: 'About Preferred Air',
-    ctaText: 'Meet Our Experts',
-    ctaHref: '#about-us',
-    footerNote: 'Proudly Family-Owned & Phoenix Valley Focused Since 2009',
-    columns: [
-      {
-        category: 'OUR HERITAGE',
-        items: [
-          { name: 'Our Founders & Local Story', href: '#about-us' },
-          { name: 'Meet Our Master Techs', href: '#about-us' },
-          { name: 'Our Craftsmanship Standards', href: '#about-us' },
-          { name: 'Real Before & After Proof', href: '#before-after-section' },
-        ],
-      },
-      {
-        category: 'OUR SERVICE FOCUS',
-        items: [
-          { name: 'Phoenix Valley Coverage', href: '#service-area-globe-section' },
-          { name: 'High-SEER2 Energy Efficiency', href: '#about-us' },
-          { name: 'How Our Process Works', href: '#how-it-works' },
-          { name: 'Customer Verified Reviews', href: '#testimonials', badge: '4.9★' },
-        ],
-      },
-      {
-        category: 'CREDENTIALS',
-        items: [
-          { name: 'AZ ROC #324150 Licensed', href: '#about-us' },
-          { name: 'NATE Certified Professionals', href: '#about-us' },
-          { name: 'EPA Clean Air Certified', href: '#about-us' },
-          { name: '100% Upfront Price Guarantee', href: '#finance' },
-        ],
-      },
-    ],
-  };
-
-  const contactUsDropdownData: MegaDropdownData = {
-    title: 'Contact Us',
-    ctaText: 'Call Live Dispatch Now',
-    ctaHref: 'tel:6026229851',
-    footerNote: '24/7 Rapid Emergency Response • Avg. 47 Min On-Site Arrival',
-    columns: [
-      {
-        category: 'DISPATCH & BOOKING',
-        items: [
-          { name: 'Instant Online Estimator', href: '#hero-section', badge: 'Fastest' },
-          { name: 'Book Service Appointment', href: '#emergency-cta-banner' },
-          { name: '24/7 Emergency Dispatch', href: '#emergency-cta-banner', badge: 'Urgent' },
-          { name: 'Request Replacement Quote', href: '#finance' },
-        ],
-      },
-      {
-        category: 'DIRECT CONTACT',
-        items: [
-          { name: '24/7 Phone: (602) 622-9851', href: 'tel:6026229851' },
-          { name: 'Email: info@preferredairaz.com', href: 'mailto:info@preferredairaz.com' },
-          { name: 'Main Office: Phoenix, AZ', href: '#service-area-globe-section' },
-          { name: 'Hours: 24/7/365 Emergency', href: '#emergency-cta-banner' },
-        ],
-      },
-      {
-        category: 'CUSTOMER CARE',
-        items: [
-          { name: 'Frequently Asked Questions', href: '#faq-section' },
-          { name: '0% Financing Inquiries', href: '#finance' },
-          { name: 'Maintenance & Warranty Plans', href: '#blog-section' },
-          { name: 'Client Feedback & Reviews', href: '#testimonials' },
-        ],
-      },
-    ],
-  };
-
   const navItems: NavItemConfig[] = [
-    { id: 'nav-home', name: 'Home', href: '#hero-section', hasDropdown: false },
-    { id: 'nav-services', name: 'Services', href: '#major-services-slider-section', hasDropdown: true, dropdownData: servicesDropdownData },
-    { id: 'nav-service-area', name: 'Service Area', href: '#service-area-globe-section', hasDropdown: false },
-    { id: 'nav-about-us', name: 'About Us', href: '#about-us', hasDropdown: true, dropdownData: aboutUsDropdownData },
-    { id: 'nav-contact-us', name: 'Contact Us', href: '#emergency-cta-banner', hasDropdown: true, dropdownData: contactUsDropdownData },
+    { id: 'nav-home', name: 'HOME', href: '#hero-section' },
+    { id: 'nav-services', name: 'SERVICES', href: '#major-services-slider-section' },
+    { id: 'nav-service-area', name: 'SERVICE AREA', href: '#service-area-globe-section' },
+    { id: 'nav-about-us', name: 'ABOUT US', href: '#about-us' },
+    { id: 'nav-contact-us', name: 'CONTACT US', href: '#emergency-cta-banner' },
   ];
 
-  const handleNavItemClick = (item: NavItemConfig, e: React.MouseEvent) => {
-    if (item.hasDropdown) {
-      e.preventDefault();
-      setIsFullScreenMenuOpen(prev => !prev);
-    } else {
-      setIsFullScreenMenuOpen(false);
-      const element = document.getElementById(item.href.substring(1));
-      element?.scrollIntoView({ behavior: 'smooth' });
+  const handleNavClick = (href: string, id?: string) => {
+    if (id === 'nav-services') {
+      setActiveMegaMenu(prev => (prev === 'services' ? null : 'services'));
+      setMobileSubScreen(prev => (prev === 'services' ? 'main' : 'services'));
+      return;
     }
+    if (id === 'nav-about-us') {
+      setActiveMegaMenu(prev => (prev === 'about' ? null : 'about'));
+      setMobileSubScreen(prev => (prev === 'about' ? 'main' : 'about'));
+      return;
+    }
+    setActiveMegaMenu(null);
+    setMobileSubScreen('main');
+    const targetId = href.startsWith('#') ? href.substring(1) : href;
+    const element = document.getElementById(targetId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+    setMobileMenuOpen(false);
   };
-
-  const activeItem = navItems.find(i => i.id === activeDropdownKey);
-  
-  if (activeItem?.dropdownData) {
-    lastDropdownDataRef.current = activeItem.dropdownData;
-  }
-
-  const availableDropdownTabs = navItems
-    .filter(i => i.hasDropdown)
-    .map(i => ({ key: i.id, label: i.name }));
 
   return (
     <>
       {/* Standalone Fixed Top Utility Bar with mix-blend-mode: difference */}
-      {/* Being a standalone fixed element prevents parent stacking context isolation so it blends directly against all page content */}
       <div
         id="navbar-top-utility-bar"
         className="fixed top-[8px] right-[10px] z-[70] hidden lg:flex items-center justify-end gap-3 pb-1 px-1 text-[10.5px] font-['Delight'] font-semibold text-white uppercase tracking-wider mix-blend-difference pointer-events-auto select-none"
@@ -282,7 +241,7 @@ export const Navbar: React.FC = () => {
             target="_blank"
             rel="noopener noreferrer"
             title="Facebook"
-            className="w-5 h-5 rounded border border-white hover:opacity-75 text-white flex items-center justify-center transition-opacity cursor-pointer"
+            className="w-5 h-5 rounded-none border border-white hover:opacity-75 text-white flex items-center justify-center transition-opacity cursor-pointer"
           >
             <Facebook className="w-2.5 h-2.5 text-white" />
           </a>
@@ -291,7 +250,7 @@ export const Navbar: React.FC = () => {
             target="_blank"
             rel="noopener noreferrer"
             title="Instagram"
-            className="w-5 h-5 rounded border border-white hover:opacity-75 text-white flex items-center justify-center transition-opacity cursor-pointer"
+            className="w-5 h-5 rounded-none border border-white hover:opacity-75 text-white flex items-center justify-center transition-opacity cursor-pointer"
           >
             <Instagram className="w-2.5 h-2.5 text-white" />
           </a>
@@ -300,7 +259,7 @@ export const Navbar: React.FC = () => {
             target="_blank"
             rel="noopener noreferrer"
             title="YouTube"
-            className="w-5 h-5 rounded border border-white hover:opacity-75 text-white flex items-center justify-center transition-opacity cursor-pointer"
+            className="w-5 h-5 rounded-none border border-white hover:opacity-75 text-white flex items-center justify-center transition-opacity cursor-pointer"
           >
             <Youtube className="w-2.5 h-2.5 text-white" />
           </a>
@@ -309,14 +268,14 @@ export const Navbar: React.FC = () => {
             target="_blank"
             rel="noopener noreferrer"
             title="Yelp Reviews"
-            className="w-5 h-5 rounded border border-white hover:opacity-75 text-white flex items-center justify-center transition-opacity cursor-pointer"
+            className="w-5 h-5 rounded-none border border-white hover:opacity-75 text-white flex items-center justify-center transition-opacity cursor-pointer"
           >
             <Store className="w-2.5 h-2.5 text-white" />
           </a>
           <a
             href="#testimonials"
             title="5-Star Rated"
-            className="w-5 h-5 rounded border border-white hover:opacity-75 text-white flex items-center justify-center transition-opacity cursor-pointer"
+            className="w-5 h-5 rounded-none border border-white hover:opacity-75 text-white flex items-center justify-center transition-opacity cursor-pointer"
           >
             <Star className="w-2.5 h-2.5 fill-current text-white" />
           </a>
@@ -331,10 +290,7 @@ export const Navbar: React.FC = () => {
         {/* div 1: Logo Wrapper */}
         <div className="flex-1 lg:flex-none flex items-center justify-start shrink-0">
           <div 
-            onClick={() => {
-              const el = document.getElementById('hero-section');
-              el?.scrollIntoView({ behavior: 'smooth' });
-            }}
+            onClick={() => handleNavClick('#hero-section')}
             className="flex items-center select-none cursor-pointer group"
           >
             <img
@@ -348,38 +304,28 @@ export const Navbar: React.FC = () => {
         {/* div 2: Desktop Header Container with Navigation Menu */}
         <div className="hidden lg:flex flex-col items-end ml-auto select-none pt-[22px]">
           {/* Navigation Menu Bar + Action Buttons */}
-          <div className="flex items-stretch shadow-xl rounded-[2px] overflow-hidden">
+          <div className="flex items-stretch shadow-xl rounded-none overflow-hidden">
             {/* White Nav Links Bar */}
-            <div className="flex items-stretch h-[40px] bg-white select-none rounded-l-[2px] overflow-hidden">
-              {/* Home Link */}
-              <button
-                type="button"
-                onClick={() => {
-                  setActiveDropdownKey(null);
-                  document.getElementById('hero-section')?.scrollIntoView({ behavior: 'smooth' });
-                }}
-                className="px-3.5 text-[11.5px] font-['Nohemi'] font-bold uppercase tracking-[0.05em] text-[#121417] hover:text-[#1E24E6] hover:bg-neutral-50 transition-colors flex items-center cursor-pointer border-r border-black/5"
-              >
-                HOME
-              </button>
-
+            <div className="flex items-stretch h-[45px] bg-white select-none rounded-none overflow-hidden">
               {/* Nav items */}
-              {navItems.slice(1).map((item) => {
-                const isDropdownActive = isFullScreenMenuOpen && item.hasDropdown;
+              {navItems.map((item) => {
+                const hasMega = item.id === 'nav-services' || item.id === 'nav-about-us';
+                const isActive = (item.id === 'nav-services' && activeMegaMenu === 'services') ||
+                                 (item.id === 'nav-about-us' && activeMegaMenu === 'about');
                 return (
                   <button
                     key={item.id}
                     type="button"
-                    onClick={(e) => handleNavItemClick(item, e)}
-                    className={`px-3.5 text-[11.5px] font-['Nohemi'] font-bold uppercase tracking-[0.05em] transition-colors flex items-center gap-1 cursor-pointer border-r border-black/5 ${
-                      isDropdownActive
-                        ? 'bg-[#F4F4F5] text-[#1E24E6]'
+                    onClick={() => handleNavClick(item.href, item.id)}
+                    className={`px-3.5 text-[10px] font-['Nohemi'] font-bold uppercase tracking-[0.05em] transition-colors flex items-center gap-1.5 cursor-pointer border-r border-black/5 rounded-none ${
+                      isActive
+                        ? 'bg-[#2934ce] text-white'
                         : 'text-[#121417] hover:text-[#1E24E6] hover:bg-neutral-50'
                     }`}
                   >
                     <span>{item.name}</span>
-                    {item.hasDropdown && (
-                      <ChevronDown className={`w-3 h-3 stroke-[2.5] transition-transform pointer-events-none ${isDropdownActive ? 'rotate-180 text-[#1E24E6]' : 'text-[#121417]/60'}`} />
+                    {hasMega && (
+                      <Plus className={`w-3 h-3 transition-transform duration-200 ${isActive ? 'rotate-45' : ''}`} />
                     )}
                   </button>
                 );
@@ -389,7 +335,7 @@ export const Navbar: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setIsSearchOpen(true)}
-                className="px-3 text-[#121417]/70 hover:text-[#1E24E6] hover:bg-neutral-50 transition-colors flex items-center cursor-pointer"
+                className="px-3 text-[#121417]/70 hover:text-[#1E24E6] hover:bg-neutral-50 transition-colors flex items-center cursor-pointer rounded-none"
                 title="Search Site"
               >
                 <Search className="w-3.5 h-3.5 stroke-[2.5]" />
@@ -397,15 +343,15 @@ export const Navbar: React.FC = () => {
             </div>
 
             {/* Right Side Action Buttons */}
-            <div className="flex items-stretch h-[40px] overflow-hidden rounded-r-[2px]">
+            <div className="flex items-stretch h-[45px] overflow-hidden rounded-none">
               {/* 1. Electric Royal Blue CALL TODAY Block */}
               <a
                 id="navbar-call-today"
                 href="tel:6026229851"
-                className="flex items-center justify-center gap-2 px-3.5 bg-[#2934ce] hover:bg-[#181DC4] text-white transition-colors duration-150 cursor-pointer select-none group min-w-[132px]"
+                className="flex items-center justify-center gap-2 px-3.5 bg-[#2934ce] hover:bg-[#181DC4] text-white transition-colors duration-150 cursor-pointer select-none group min-w-[132px] rounded-none"
                 title="Call Today (602) 622-9851"
               >
-                <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center shrink-0 group-hover:bg-white/30 transition-colors">
+                <div className="w-6 h-6 rounded-none bg-white/20 flex items-center justify-center shrink-0 group-hover:bg-white/30 transition-colors">
                   <PhoneCall className="w-3.5 h-3.5 text-white stroke-[2.4]" />
                 </div>
                 <div className="flex flex-col text-left">
@@ -422,11 +368,8 @@ export const Navbar: React.FC = () => {
               <button
                 id="navbar-book-online"
                 type="button"
-                onClick={() => {
-                  const el = document.getElementById('hero-section');
-                  el?.scrollIntoView({ behavior: 'smooth' });
-                }}
-                className="flex items-center justify-center gap-1.5 px-4 bg-[#000000] hover:bg-[#121417] text-white transition-colors duration-150 cursor-pointer select-none group min-w-[110px] rounded-r-[2px]"
+                onClick={() => handleNavClick('#hero-section')}
+                className="flex items-center justify-center gap-1.5 px-4 bg-[#000000] hover:bg-[#121417] text-white transition-colors duration-150 cursor-pointer select-none group min-w-[110px] rounded-none"
               >
                 <Calendar className="w-3.5 h-3.5 text-white stroke-[2.2] group-hover:scale-110 transition-transform" />
                 <span className="font-['Nohemi'] font-bold text-[11.5px] uppercase tracking-[0.06em] text-white whitespace-nowrap group-hover:scale-[1.01] transition-transform">
@@ -435,39 +378,120 @@ export const Navbar: React.FC = () => {
               </button>
             </div>
           </div>
+
+          {/* Slide-Down Mega Menu Panel (50vh max height, solid #2934ce, white text, no borders) */}
+          {activeMegaMenu && (
+            <div
+              ref={megaMenuRef}
+              className="absolute top-[72px] right-0 w-[92vw] max-w-5xl bg-[#2934ce] text-white p-6 rounded-none shadow-2xl border-none max-h-[50vh] overflow-y-auto mega-menu-scrollbar z-50 origin-top-right [will-change:transform,opacity]"
+            >
+              <div className="flex items-center justify-between pb-3 mb-4 border-b border-white/20">
+                <span className="font-['Nohemi'] font-bold text-sm sm:text-base uppercase tracking-wider text-white">
+                  {activeMegaMenu === 'services' ? '❄️ Comprehensive HVAC Services Directory' : '🏢 Preferred Air Company Profile & Standards'}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setActiveMegaMenu(null)}
+                  className="px-3 py-1 bg-white/10 hover:bg-white/20 text-white text-[11px] font-['Delight'] uppercase transition-colors rounded-none cursor-pointer border-none"
+                >
+                  Close [✕]
+                </button>
+              </div>
+
+              {activeMegaMenu === 'services' && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {servicesMegaMenu.map((group, idx) => (
+                    <div key={idx} className="space-y-2">
+                      <h4 className="font-['Nohemi'] font-bold text-xs tracking-wide text-white/95 pb-1 border-b border-white/15">
+                        {group.category}
+                      </h4>
+                      <ul className="space-y-1.5">
+                        {group.items.map((subItem, sIdx) => (
+                          <li key={sIdx}>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setActiveMegaMenu(null);
+                                handleNavClick('#major-services-slider-section');
+                              }}
+                              className="text-[11.5px] font-['Delight'] text-white/80 hover:text-white hover:translate-x-1 transition-all text-left cursor-pointer bg-transparent border-none p-0 flex items-center gap-1.5"
+                            >
+                              <span className="text-white/60">▪</span> {subItem}
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {activeMegaMenu === 'about' && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  {aboutMegaMenu.map((group, idx) => (
+                    <div key={idx} className="space-y-2">
+                      <h4 className="font-['Nohemi'] font-bold text-xs tracking-wide text-white/95 pb-1 border-b border-white/15">
+                        {group.category}
+                      </h4>
+                      <ul className="space-y-2">
+                        {group.items.map((subItem, sIdx) => (
+                          <li key={sIdx}>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setActiveMegaMenu(null);
+                                handleNavClick('#about-us');
+                              }}
+                              className="text-[11.5px] font-['Delight'] text-white/80 hover:text-white hover:translate-x-1 transition-all text-left cursor-pointer bg-transparent border-none p-0 flex items-center gap-1.5"
+                            >
+                              <span className="text-white/60">▪</span> {subItem}
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* div 3: Mobile Compact Menu trigger */}
-        <div className="lg:hidden flex flex-1 justify-end gap-2">
+        <div className="lg:hidden flex flex-1 justify-end items-center gap-2 h-[45px]">
           <button
             type="button"
             onClick={() => setIsSearchOpen(true)}
-            className="bg-[#121417]/80 backdrop-blur-md p-2 rounded-full border border-white/10 text-white"
+            className="w-[45px] h-[45px] min-w-[45px] bg-[#121417]/90 backdrop-blur-md rounded-none border border-white/10 text-white flex items-center justify-center p-0 cursor-pointer hover:bg-[#121417] transition-colors"
             aria-label="Search"
           >
             <Search className="w-4 h-4" />
           </button>
           <button
             type="button"
-            onClick={() => setIsFullScreenMenuOpen(true)}
-            className="bg-[#121417]/80 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 text-[11px] font-subheading font-medium text-white uppercase tracking-wider cursor-pointer"
+            onClick={() => setMobileMenuOpen(true)}
+            className="h-[45px] px-5 bg-[#121417]/90 backdrop-blur-md rounded-none border border-white/10 text-[10px] font-['Nohemi'] font-bold text-white uppercase tracking-wider flex items-center justify-center cursor-pointer hover:bg-[#121417] transition-colors"
           >
             Menu
           </button>
         </div>
-
-        {/* Full Screen 100vw x 100vh Dropdown Menu with #2934ce Pixel Grid Wipe */}
-        <FullScreenDropdown
-          isOpen={isFullScreenMenuOpen}
-          onClose={() => setIsFullScreenMenuOpen(false)}
-        />
       </nav>
 
       {/* Mobile Drawer Overlay */}
       {mobileMenuOpen && (
-        <div className="fixed inset-0 z-50 bg-black/95 backdrop-blur-md flex flex-col justify-between p-6 lg:hidden animate-fadeIn">
-          <div className="space-y-6">
-            <div className="flex items-center justify-between border-b border-zinc-800 pb-4">
+        <div className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-md flex flex-col justify-between p-5 sm:p-6 lg:hidden animate-fadeIn">
+          {/* Header Bar with Back Button / Logo & Close */}
+          <div className="flex items-center justify-between border-b border-zinc-800 pb-3.5 shrink-0">
+            {mobileSubScreen !== 'main' ? (
+              <button
+                type="button"
+                onClick={() => setMobileSubScreen('main')}
+                className="flex items-center gap-2 text-white bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 px-3 py-1.5 rounded-lg text-xs font-['Nohemi'] font-bold uppercase tracking-wider cursor-pointer transition-colors"
+              >
+                <ArrowLeft className="w-4 h-4 text-[#FE552F]" />
+                <span>BACK TO MENU</span>
+              </button>
+            ) : (
               <div className="flex items-center gap-2">
                 <img
                   src="/Preferred-Air 1.png"
@@ -475,58 +499,168 @@ export const Navbar: React.FC = () => {
                   className="h-8 w-auto object-contain"
                 />
               </div>
-              <button
-                type="button"
-                onClick={() => setMobileMenuOpen(false)}
-                className="w-9 h-9 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center text-white cursor-pointer"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
+            )}
 
-            <div className="space-y-4 flex flex-col items-start">
-              <button
-                type="button"
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  document.getElementById('hero-section')?.scrollIntoView({ behavior: 'smooth' });
-                }}
-                className="font-nohemi font-bold text-2xl text-white uppercase"
-              >
-                Home
-              </button>
-
-              {navItems.slice(1).map((item) => (
-                <button
-                  key={item.id}
-                  type="button"
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    if (item.hasDropdown) {
-                      setActiveDropdownKey(item.id);
-                    } else {
-                      document.getElementById(item.href.substring(1))?.scrollIntoView({ behavior: 'smooth' });
-                    }
-                  }}
-                  className="font-nohemi font-bold text-2xl text-white uppercase flex items-center gap-2"
-                >
-                  <span>{item.name}</span>
-                  {item.hasDropdown && <span className="text-xs text-zinc-400">Dropdown</span>}
-                </button>
-              ))}
-            </div>
+            <button
+              type="button"
+              onClick={() => {
+                setMobileMenuOpen(false);
+                setMobileSubScreen('main');
+              }}
+              className="w-9 h-9 rounded-lg bg-zinc-900 border border-zinc-800 flex items-center justify-center text-white cursor-pointer hover:bg-zinc-800 transition-colors"
+              aria-label="Close Mobile Menu"
+            >
+              <X className="w-5 h-5" />
+            </button>
           </div>
 
-          <div className="border-t border-zinc-800 pt-6 flex flex-col gap-2.5">
+          {/* MAIN MENU SCREEN */}
+          {mobileSubScreen === 'main' && (
+            <div className="space-y-4 flex flex-col items-start w-full overflow-y-auto max-h-[62vh] py-3 pr-1">
+              {navItems.map((item) => {
+                const isServices = item.id === 'nav-services';
+                const isAbout = item.id === 'nav-about-us';
+                const hasSubscreen = isServices || isAbout;
+
+                return (
+                  <div key={item.id} className="w-full border-b border-zinc-800/80 pb-3.5">
+                    <div className="flex items-center justify-between w-full">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (isServices) {
+                            setMobileSubScreen('services');
+                          } else if (isAbout) {
+                            setMobileSubScreen('about');
+                          } else {
+                            handleNavClick(item.href, item.id);
+                          }
+                        }}
+                        className="font-nohemi font-bold text-2xl text-white uppercase flex items-center gap-2 cursor-pointer text-left hover:text-[#FE552F] transition-colors"
+                      >
+                        <span>{item.name}</span>
+                      </button>
+
+                      {hasSubscreen && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (isServices) setMobileSubScreen('services');
+                            if (isAbout) setMobileSubScreen('about');
+                          }}
+                          className="flex items-center gap-1.5 px-3 py-1.5 bg-[#2934ce] hover:bg-[#1f28aa] text-white text-[11px] font-['Nohemi'] font-bold rounded-lg uppercase tracking-wider cursor-pointer border border-white/10 transition-colors"
+                        >
+                          <span>VIEW ALL</span>
+                          <ChevronRight className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {/* DEDICATED SEPARATE SUB-SCREEN: ALL SERVICES */}
+          {mobileSubScreen === 'services' && (
+            <div className="flex-1 flex flex-col w-full overflow-hidden my-2">
+              <div className="flex items-center justify-between pb-3 border-b border-zinc-800 mb-3 shrink-0">
+                <div>
+                  <h3 className="font-['Nohemi'] font-bold text-lg text-white uppercase tracking-wider flex items-center gap-2">
+                    <span>❄️ ALL HVAC SERVICES</span>
+                  </h3>
+                  <p className="font-['Delight'] text-xs text-zinc-400 mt-0.5">
+                    Select any climate service to jump directly to details
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex-1 overflow-y-auto space-y-4 pr-1 py-1">
+                {servicesMegaMenu.map((group, idx) => (
+                  <div key={idx} className="bg-[#181C20] rounded-xl p-4 border border-zinc-800 space-y-2.5">
+                    <h4 className="font-['Nohemi'] font-bold text-sm text-[#FE552F] pb-1.5 border-b border-zinc-800/80">
+                      {group.category}
+                    </h4>
+                    <div className="grid grid-cols-1 gap-2">
+                      {group.items.map((subItem, sIdx) => (
+                        <button
+                          key={sIdx}
+                          type="button"
+                          onClick={() => {
+                            setMobileMenuOpen(false);
+                            setMobileSubScreen('main');
+                            handleNavClick('#major-services-slider-section');
+                          }}
+                          className="text-xs font-['Delight'] text-zinc-200 hover:text-white bg-zinc-900/80 hover:bg-[#2934ce] p-2.5 rounded-lg border border-zinc-800/60 transition-colors text-left flex items-center justify-between cursor-pointer"
+                        >
+                          <span>{subItem}</span>
+                          <ArrowRight className="w-3.5 h-3.5 text-zinc-500" />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* DEDICATED SEPARATE SUB-SCREEN: ABOUT US */}
+          {mobileSubScreen === 'about' && (
+            <div className="flex-1 flex flex-col w-full overflow-hidden my-2">
+              <div className="flex items-center justify-between pb-3 border-b border-zinc-800 mb-3 shrink-0">
+                <div>
+                  <h3 className="font-['Nohemi'] font-bold text-lg text-white uppercase tracking-wider flex items-center gap-2">
+                    <span>🏢 ABOUT PREFERRED AIR</span>
+                  </h3>
+                  <p className="font-['Delight'] text-xs text-zinc-400 mt-0.5">
+                    15+ years serving Phoenix Metro • License ROC #349892
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex-1 overflow-y-auto space-y-4 pr-1 py-1">
+                {aboutMegaMenu.map((group, idx) => (
+                  <div key={idx} className="bg-[#181C20] rounded-xl p-4 border border-zinc-800 space-y-2.5">
+                    <h4 className="font-['Nohemi'] font-bold text-sm text-[#FE552F] pb-1.5 border-b border-zinc-800/80">
+                      {group.category}
+                    </h4>
+                    <div className="grid grid-cols-1 gap-2">
+                      {group.items.map((subItem, sIdx) => (
+                        <button
+                          key={sIdx}
+                          type="button"
+                          onClick={() => {
+                            setMobileMenuOpen(false);
+                            setMobileSubScreen('main');
+                            handleNavClick('#about-us');
+                          }}
+                          className="text-xs font-['Delight'] text-zinc-200 hover:text-white bg-zinc-900/80 hover:bg-[#2934ce] p-2.5 rounded-lg border border-zinc-800/60 transition-colors text-left flex items-center justify-between cursor-pointer"
+                        >
+                          <span>{subItem}</span>
+                          <ArrowRight className="w-3.5 h-3.5 text-zinc-500" />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* BOTTOM FIXED CALL / BOOK CTA BUTTONS */}
+          <div className="border-t border-zinc-800 pt-3.5 flex flex-col gap-2 shrink-0">
             <a
               href="tel:6026229851"
-              onClick={() => setMobileMenuOpen(false)}
-              className="w-full py-3 flex flex-col items-center justify-center bg-[#1E24E6] hover:bg-[#181DC4] text-white transition-colors select-none cursor-pointer"
+              onClick={() => {
+                setMobileMenuOpen(false);
+                setMobileSubScreen('main');
+              }}
+              className="w-full py-2.5 flex flex-col items-center justify-center bg-[#1E24E6] hover:bg-[#181DC4] text-white transition-colors select-none cursor-pointer rounded-lg"
             >
-              <span className="font-['Delight'] font-semibold text-[11px] uppercase tracking-wider text-white/95">
+              <span className="font-['Delight'] font-semibold text-[10px] uppercase tracking-wider text-white/95">
                 CALL TODAY
               </span>
-              <span className="font-['Nohemi'] font-bold text-[20px] text-white tracking-tight leading-none mt-1">
+              <span className="font-['Nohemi'] font-bold text-[18px] text-white tracking-tight leading-none mt-0.5">
                 (602) 622-9851
               </span>
             </a>
@@ -535,11 +669,12 @@ export const Navbar: React.FC = () => {
               type="button"
               onClick={() => {
                 setMobileMenuOpen(false);
-                document.getElementById('hero-section')?.scrollIntoView({ behavior: 'smooth' });
+                setMobileSubScreen('main');
+                handleNavClick('#hero-section');
               }}
-              className="w-full h-12 flex items-center justify-center bg-[#000000] hover:bg-zinc-900 text-white font-['Nohemi'] font-bold text-[14px] uppercase tracking-wider border border-zinc-800 transition-colors select-none cursor-pointer"
+              className="w-full h-11 flex items-center justify-center bg-[#000000] hover:bg-zinc-900 text-white font-['Nohemi'] font-bold text-[13px] uppercase tracking-wider border border-zinc-800 transition-colors select-none cursor-pointer rounded-lg"
             >
-              BOOK ONLINE
+              BOOK ONLINE NOW
             </button>
           </div>
         </div>
@@ -547,7 +682,7 @@ export const Navbar: React.FC = () => {
 
       {/* Dynamic Interactive Search Dialog Screen */}
       {isSearchOpen && (
-        <div className="fixed inset-0 z-50 flex items-start justify-center pt-24 sm:pt-32 px-4 bg-black/85 backdrop-blur-md animate-fadeIn">
+        <div className="fixed inset-0 z-[100] flex items-start justify-center pt-24 sm:pt-32 px-4 bg-black/85 backdrop-blur-md animate-fadeIn">
           <div className="w-full max-w-xl bg-[#1A1D21] border border-zinc-800 rounded-2xl overflow-hidden shadow-2xl p-5 relative">
             
             {/* Header / Input */}

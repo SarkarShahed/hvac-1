@@ -151,7 +151,7 @@ const serviceItems: ServiceCardItem[] = [
 ];
 
 export const MajorServicesSlider: React.FC = () => {
-  const [viewMode, setViewMode] = useState<'slider' | 'grid'>('slider');
+  const [viewMode, setViewMode] = useState<'slider' | 'grid'>('grid');
 
   const sectionRef = useRef<HTMLElement>(null);
   const trackWrapperRef = useRef<HTMLDivElement>(null);
@@ -160,6 +160,8 @@ export const MajorServicesSlider: React.FC = () => {
 
   // Initialize and manage GSAP Horizontal Pin ScrollTrigger with proper cleanup and refresh
   useEffect(() => {
+    let timer: NodeJS.Timeout;
+
     const ctx = gsap.context(() => {
       if (viewMode !== 'slider') {
         ScrollTrigger.refresh();
@@ -171,35 +173,34 @@ export const MajorServicesSlider: React.FC = () => {
       const wrapper = trackWrapperRef.current;
       if (!section || !track || !wrapper) return;
 
-      const calculateScroll = () => {
-        const trackScrollWidth = track.scrollWidth;
-        const viewportWidth = wrapper.clientWidth;
-        return -(trackScrollWidth - viewportWidth);
-      };
+      const getScrollDistance = () => Math.max(0, track.scrollWidth - wrapper.clientWidth);
 
-      gsap.set(track, { x: 0 });
-
-      const st = ScrollTrigger.create({
-        trigger: section,
-        pin: true,
-        pinSpacing: true,
-        start: 'top top',
-        end: () => {
-          const distance = Math.abs(calculateScroll());
-          return `+=${Math.max(distance, 1000)}`;
+      // Create hardware-accelerated pin tween
+      const tween = gsap.to(track, {
+        x: () => -getScrollDistance(),
+        ease: 'none',
+        scrollTrigger: {
+          id: 'major-services-pin',
+          trigger: section,
+          pin: true,
+          pinSpacing: true,
+          start: 'top top',
+          end: () => `+=${Math.max(getScrollDistance(), 800)}`,
+          scrub: 0.6,
+          anticipatePin: 0.5,
+          invalidateOnRefresh: true,
+          fastScrollEnd: true,
+          preventOverlaps: true,
         },
-        scrub: 0.8,
-        anticipatePin: 1,
-        invalidateOnRefresh: true,
-        animation: gsap.to(track, {
-          x: calculateScroll,
-          ease: 'none',
-        }),
       });
 
-      scrollTriggerRef.current = st;
-      ScrollTrigger.sort();
-      ScrollTrigger.refresh();
+      scrollTriggerRef.current = tween.scrollTrigger || null;
+
+      // Delayed refresh to ensure DOM has fully painted
+      timer = setTimeout(() => {
+        ScrollTrigger.sort();
+        ScrollTrigger.refresh();
+      }, 100);
     }, sectionRef);
 
     const handleResize = () => {
@@ -208,6 +209,7 @@ export const MajorServicesSlider: React.FC = () => {
     window.addEventListener('resize', handleResize);
 
     return () => {
+      clearTimeout(timer);
       window.removeEventListener('resize', handleResize);
       ctx.revert();
       if (scrollTriggerRef.current) {
@@ -224,22 +226,16 @@ export const MajorServicesSlider: React.FC = () => {
       ref={sectionRef}
       className="relative w-full max-w-[100vw] bg-[#FFFFFF] text-[#121417] overflow-hidden p-0 select-none border-t border-b border-[#ECEDEF]"
     >
-      {/* Background Video Layer with Primary White Ambient Overlay */}
+      {/* Lightweight Ambient Pattern Overlay (0% CPU / GPU lag) */}
       <div className="absolute inset-0 w-full h-full pointer-events-none overflow-hidden z-0">
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="w-full h-full object-cover object-center opacity-20 filter contrast-125 brightness-95"
-        >
-          <source
-            src="https://assets.mixkit.co/videos/preview/mixkit-modern-apartment-with-air-conditioning-unit-41549-large.mp4"
-            type="video/mp4"
-          />
-        </video>
-        {/* Soft Primary White Gradient Backdrop */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#FFFFFF]/95 via-[#FFFFFF]/85 to-[#FFFFFF] z-1" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#FFFFFF] via-[#F8F9FA] to-[#FFFFFF]" />
+        <div 
+          className="absolute inset-0 opacity-[0.035]"
+          style={{
+            backgroundImage: `radial-gradient(#121417 1px, transparent 1px)`,
+            backgroundSize: '24px 24px'
+          }}
+        />
       </div>
 
       {/* Content Container */}
@@ -303,7 +299,7 @@ export const MajorServicesSlider: React.FC = () => {
           <div ref={trackWrapperRef} className="w-full my-auto overflow-hidden py-4">
             <div
               ref={trackRef}
-              className="flex gap-5 sm:gap-6 w-max will-change-transform"
+              className="flex gap-5 sm:gap-6 w-max transform-gpu will-change-transform"
             >
               {serviceItems.map((item) => {
                 const Icon = item.icon;
@@ -311,14 +307,14 @@ export const MajorServicesSlider: React.FC = () => {
                   <a
                     key={item.id}
                     href={item.href}
-                    className="group relative block w-[85vw] sm:w-[46vw] lg:w-[calc((100vw-110px)/3)] h-[480px] sm:h-[500px] lg:h-[520px] shrink-0 rounded-[8px] border-0 overflow-hidden bg-[#FFFFFF] shadow-lg hover:shadow-2xl text-left cursor-pointer transition-all duration-300"
+                    className="group relative block w-[85vw] sm:w-[46vw] lg:w-[calc((100vw-110px)/3)] h-[480px] sm:h-[500px] lg:h-[520px] shrink-0 rounded-[8px] border-0 overflow-hidden bg-[#121417] shadow-md text-left cursor-pointer transform-gpu hover:-translate-y-1 transition-transform duration-300"
                   >
                     {/* Background Image Layer with Zoom & Contrast */}
                     <div className="absolute inset-0 w-full h-full overflow-hidden">
                       <img
                         src={item.image}
                         alt={item.title}
-                        className="w-full h-full object-cover object-center scale-100 group-hover:scale-108 transition-transform duration-700 ease-out"
+                        className="w-full h-full object-cover object-center scale-100 group-hover:scale-105 transition-transform duration-500 ease-out"
                         referrerPolicy="no-referrer"
                       />
                       {/* Gradient Backdrop Layer */}
@@ -329,17 +325,17 @@ export const MajorServicesSlider: React.FC = () => {
                     <div className="relative z-10 w-full h-full p-6 sm:p-7 flex flex-col justify-between text-left">
                       {/* Top Header: Number + Status Badge */}
                       <div className="flex items-center justify-between">
-                        <span className="font-['Nohemi'] font-bold text-2xl sm:text-3xl text-white/40 group-hover:text-white transition-colors">
+                        <span className="font-['Nohemi'] font-bold text-2xl sm:text-3xl text-white/40 group-hover:text-white transition-colors duration-200">
                           {item.number}
                         </span>
-                        <span className="font-['Delight'] font-medium text-[11px] uppercase tracking-wider px-2.5 py-1 rounded-[4px] bg-black/40 text-white backdrop-blur-xs border-0 group-hover:bg-white group-hover:text-[#121417] transition-all">
+                        <span className="font-['Delight'] font-medium text-[11px] uppercase tracking-wider px-2.5 py-1 rounded-[4px] bg-black/60 text-white border-0 group-hover:bg-white group-hover:text-[#121417] transition-colors duration-200">
                           {item.badge}
                         </span>
                       </div>
 
                       {/* Bottom Description & Feature Highlights */}
                       <div className="space-y-3 pt-8 text-left">
-                        <div className="w-11 h-11 rounded-[6px] bg-white text-[#121417] flex items-center justify-center transition-all duration-300 shadow-xs">
+                        <div className="w-11 h-11 rounded-[6px] bg-white text-[#121417] flex items-center justify-center transition-transform duration-300 group-hover:scale-105 shadow-xs">
                           <Icon className="w-5 h-5" />
                         </div>
 
@@ -369,7 +365,7 @@ export const MajorServicesSlider: React.FC = () => {
                         {/* Interactive Link Action Row */}
                         <div className="pt-3 flex items-center justify-between text-xs font-['Nohemi'] font-bold uppercase tracking-wider text-white group-hover:text-[#ECEDEF] transition-colors">
                           <span className="flex items-center gap-2">Explore Solution</span>
-                          <span className="w-8 h-8 rounded-[4px] bg-white/15 group-hover:bg-white group-hover:text-[#121417] flex items-center justify-center transition-all">
+                          <span className="w-8 h-8 rounded-[4px] bg-white/15 group-hover:bg-white group-hover:text-[#121417] flex items-center justify-center transition-colors duration-200">
                             <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
                           </span>
                         </div>
@@ -392,14 +388,14 @@ export const MajorServicesSlider: React.FC = () => {
                   <a
                     key={item.id}
                     href={item.href}
-                    className="group relative block w-full h-[460px] sm:h-[480px] rounded-[8px] border-0 overflow-hidden bg-[#FFFFFF] shadow-lg hover:shadow-2xl text-left cursor-pointer transition-all duration-300"
+                    className="group relative block w-full h-[460px] sm:h-[480px] rounded-[8px] border-0 overflow-hidden bg-[#121417] shadow-md text-left cursor-pointer transform-gpu hover:-translate-y-1 transition-transform duration-300"
                   >
                     {/* Background Image Layer */}
                     <div className="absolute inset-0 w-full h-full overflow-hidden">
                       <img
                         src={item.image}
                         alt={item.title}
-                        className="w-full h-full object-cover object-center scale-100 group-hover:scale-108 transition-transform duration-700 ease-out"
+                        className="w-full h-full object-cover object-center scale-100 group-hover:scale-105 transition-transform duration-500 ease-out"
                         referrerPolicy="no-referrer"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-[#121417] via-[#121417]/75 to-transparent" />
@@ -408,16 +404,16 @@ export const MajorServicesSlider: React.FC = () => {
                     {/* Card Content */}
                     <div className="relative z-10 w-full h-full p-6 sm:p-7 flex flex-col justify-between text-left">
                       <div className="flex items-center justify-between">
-                        <span className="font-['Nohemi'] font-bold text-2xl text-white/40 group-hover:text-white transition-colors">
+                        <span className="font-['Nohemi'] font-bold text-2xl text-white/40 group-hover:text-white transition-colors duration-200">
                           {item.number}
                         </span>
-                        <span className="font-['Delight'] font-medium text-[11px] uppercase tracking-wider px-2.5 py-1 rounded-[4px] bg-black/40 text-white backdrop-blur-xs border-0 group-hover:bg-white group-hover:text-[#121417] transition-all">
+                        <span className="font-['Delight'] font-medium text-[11px] uppercase tracking-wider px-2.5 py-1 rounded-[4px] bg-black/60 text-white border-0 group-hover:bg-white group-hover:text-[#121417] transition-colors duration-200">
                           {item.badge}
                         </span>
                       </div>
 
                       <div className="space-y-3 pt-6 text-left">
-                        <div className="w-10 h-10 rounded-[6px] bg-white text-[#121417] flex items-center justify-center transition-all duration-300 shadow-xs">
+                        <div className="w-10 h-10 rounded-[6px] bg-white text-[#121417] flex items-center justify-center transition-transform duration-300 group-hover:scale-105 shadow-xs">
                           <Icon className="w-5 h-5" />
                         </div>
 
@@ -444,9 +440,9 @@ export const MajorServicesSlider: React.FC = () => {
                         </div>
 
                         <div className="pt-2 flex items-center justify-between text-xs font-['Nohemi'] font-bold uppercase tracking-wider text-white group-hover:text-[#ECEDEF] transition-colors">
-                          <span>Explore Solution</span>
-                          <span className="w-7 h-7 rounded-[4px] bg-white/15 group-hover:bg-white group-hover:text-[#121417] flex items-center justify-center transition-all">
-                            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                          <span className="flex items-center gap-2">Explore Solution</span>
+                          <span className="w-8 h-8 rounded-[4px] bg-white/15 group-hover:bg-white group-hover:text-[#121417] flex items-center justify-center transition-colors duration-200">
+                            <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
                           </span>
                         </div>
                       </div>

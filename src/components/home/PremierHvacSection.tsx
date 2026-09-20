@@ -109,14 +109,30 @@ interface ValueCardProps {
 
 const ValueCard: React.FC<ValueCardProps> = ({ item, className = '' }) => {
   const Icon = item.icon;
+  const cardRef = useRef<HTMLDivElement>(null);
+  const rectRef = useRef<DOMRect | null>(null);
+
+  const handleMouseEnter = () => {
+    if (cardRef.current) {
+      rectRef.current = cardRef.current.getBoundingClientRect();
+    }
+  };
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!cardRef.current) return;
+    const rect = rectRef.current || cardRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    cardRef.current.style.setProperty('--mouse-x', `${x}px`);
+    cardRef.current.style.setProperty('--mouse-y', `${y}px`);
+  };
+
   return (
     <div
-      onMouseMove={(e) => {
-        const rect = e.currentTarget.getBoundingClientRect();
-        e.currentTarget.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
-        e.currentTarget.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
-      }}
-      className={`group relative overflow-hidden block rounded-[8px] border-none p-6 sm:p-7 bg-[#ECEDEF] shadow-none hover:shadow-[0_12px_32px_rgba(41,52,206,0.12)] text-left transition-all duration-300 flex flex-col justify-between ${className}`}
+      ref={cardRef}
+      onMouseEnter={handleMouseEnter}
+      onMouseMove={handleMouseMove}
+      className={`group relative overflow-hidden block rounded-[8px] border-none p-6 sm:p-7 bg-[#ECEDEF] text-left transform-gpu hover:-translate-y-1 transition-transform duration-300 flex flex-col justify-between select-none ${className}`}
     >
       {/* Base Grid Pattern Hover Effect using #2934ce */}
       <div
@@ -155,7 +171,7 @@ const ValueCard: React.FC<ValueCardProps> = ({ item, className = '' }) => {
       <div className="relative z-10">
         {/* Card Header */}
         <div className="flex items-center justify-between mb-6">
-          <div className="w-12 h-12 rounded-[8px] bg-[#121417] text-white flex items-center justify-center group-hover:bg-[#2934ce] group-hover:scale-105 transition-all duration-300">
+          <div className="w-12 h-12 rounded-[8px] bg-[#121417] text-white flex items-center justify-center group-hover:bg-[#2934ce] group-hover:scale-105 transition-transform duration-300">
             <Icon className="w-6 h-6" />
           </div>
           <span className="text-[10px] font-['Delight'] font-bold uppercase tracking-wider text-[#121417]/70 bg-[#FFFFFF] group-hover:bg-[#2934ce]/10 group-hover:text-[#2934ce] px-2.5 py-1 rounded-[8px] border border-[#121417]/10 group-hover:border-[#2934ce]/25 transition-colors">
@@ -187,7 +203,7 @@ const ValueCard: React.FC<ValueCardProps> = ({ item, className = '' }) => {
 };
 
 export const PremierHvacSection: React.FC = () => {
-  const [viewMode, setViewMode] = useState<'slider' | 'grid'>('slider');
+  const [viewMode, setViewMode] = useState<'slider' | 'grid'>('grid');
 
   const sectionRef = useRef<HTMLElement>(null);
   const trackWrapperRef = useRef<HTMLDivElement>(null);
@@ -196,6 +212,8 @@ export const PremierHvacSection: React.FC = () => {
 
   // Initialize and manage GSAP Horizontal Pin ScrollTrigger
   useEffect(() => {
+    let timer: NodeJS.Timeout;
+
     const ctx = gsap.context(() => {
       if (viewMode !== 'slider') {
         ScrollTrigger.refresh();
@@ -207,35 +225,34 @@ export const PremierHvacSection: React.FC = () => {
       const wrapper = trackWrapperRef.current;
       if (!section || !track || !wrapper) return;
 
-      const calculateScroll = () => {
-        const trackScrollWidth = track.scrollWidth;
-        const viewportWidth = wrapper.clientWidth;
-        return -(trackScrollWidth - viewportWidth);
-      };
+      const getScrollDistance = () => Math.max(0, track.scrollWidth - wrapper.clientWidth);
 
-      gsap.set(track, { x: 0 });
-
-      const st = ScrollTrigger.create({
-        trigger: section,
-        pin: true,
-        pinSpacing: true,
-        start: 'top top',
-        end: () => {
-          const distance = Math.abs(calculateScroll());
-          return `+=${Math.max(distance, 1000)}`;
+      // Create hardware-accelerated pin tween
+      const tween = gsap.to(track, {
+        x: () => -getScrollDistance(),
+        ease: 'none',
+        scrollTrigger: {
+          id: 'premier-hvac-pin',
+          trigger: section,
+          pin: true,
+          pinSpacing: true,
+          start: 'top top',
+          end: () => `+=${Math.max(getScrollDistance(), 800)}`,
+          scrub: 0.6,
+          anticipatePin: 0.5,
+          invalidateOnRefresh: true,
+          fastScrollEnd: true,
+          preventOverlaps: true,
         },
-        scrub: 0.8,
-        anticipatePin: 1,
-        invalidateOnRefresh: true,
-        animation: gsap.to(track, {
-          x: calculateScroll,
-          ease: 'none',
-        }),
       });
 
-      scrollTriggerRef.current = st;
-      ScrollTrigger.sort();
-      ScrollTrigger.refresh();
+      scrollTriggerRef.current = tween.scrollTrigger || null;
+
+      // Delayed refresh to ensure DOM has fully painted
+      timer = setTimeout(() => {
+        ScrollTrigger.sort();
+        ScrollTrigger.refresh();
+      }, 100);
     }, sectionRef);
 
     const handleResize = () => {
@@ -244,6 +261,7 @@ export const PremierHvacSection: React.FC = () => {
     window.addEventListener('resize', handleResize);
 
     return () => {
+      clearTimeout(timer);
       window.removeEventListener('resize', handleResize);
       ctx.revert();
       if (scrollTriggerRef.current) {
@@ -329,7 +347,7 @@ export const PremierHvacSection: React.FC = () => {
           <div ref={trackWrapperRef} className="w-full my-auto overflow-hidden py-6">
             <div
               ref={trackRef}
-              className="flex gap-5 sm:gap-6 w-max will-change-transform"
+              className="flex gap-5 sm:gap-6 w-max transform-gpu will-change-transform"
             >
               {valueCards.map((item) => (
                 <ValueCard
@@ -344,7 +362,7 @@ export const PremierHvacSection: React.FC = () => {
 
         {/* View Mode 2: Responsive Grid View (Showing 4 Cards per Row) */}
         {viewMode === 'grid' && (
-          <div className="w-full my-auto py-6">
+          <div className="w-full my-auto py-6 pr-[20px]">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
               {valueCards.map((item) => (
                 <ValueCard

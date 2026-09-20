@@ -6,17 +6,19 @@ export function useLenis() {
   const lenisRef = useRef<Lenis | null>(null);
 
   useEffect(() => {
-    const isTouch = typeof window !== 'undefined' && ('ontouchstart' in window || navigator.maxTouchPoints > 0);
+    if (typeof window === 'undefined') return;
 
-    // Initialize Lenis for smooth inertia scrolling
+    const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
+    // Initialize Lenis with optimized smooth scroll profile
     const lenis = new Lenis({
-      duration: isTouch ? 0.9 : 1.1,
+      duration: isTouch ? 0.7 : 0.9,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       orientation: 'vertical',
       gestureOrientation: 'vertical',
       smoothWheel: true,
-      wheelMultiplier: 1.0,
-      touchMultiplier: 1.2,
+      wheelMultiplier: 0.9,
+      touchMultiplier: 1.1,
       syncTouch: false,
     });
 
@@ -25,14 +27,15 @@ export function useLenis() {
 
     lenis.on('scroll', ScrollTrigger.update);
 
+    // High performance RAF ticker integration with GSAP
     const updateRaf = (time: number) => {
       lenis.raf(time * 1000);
     };
 
     gsap.ticker.add(updateRaf);
-    gsap.ticker.lagSmoothing(500, 33);
+    gsap.ticker.lagSmoothing(0); // Prevents frame drops and jitter during inertia scrolling
 
-    // Smooth anchor link click handler across the site
+    // Smooth anchor link handler
     const handleAnchorClick = (e: MouseEvent) => {
       const target = (e.target as HTMLElement).closest('a[href^="#"]');
       if (target) {
@@ -43,7 +46,7 @@ export function useLenis() {
             e.preventDefault();
             lenis.scrollTo(targetEl as HTMLElement, {
               offset: -40,
-              duration: 1.2,
+              duration: 0.9,
               easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
             });
           }
@@ -51,7 +54,7 @@ export function useLenis() {
       }
     };
 
-    document.addEventListener('click', handleAnchorClick);
+    document.addEventListener('click', handleAnchorClick, { passive: false });
 
     return () => {
       document.removeEventListener('click', handleAnchorClick);
@@ -64,5 +67,3 @@ export function useLenis() {
 
   return lenisRef;
 }
-
-

@@ -1,5 +1,6 @@
 import React, { Suspense, lazy } from 'react';
 import { Navbar, Footer } from './components/layout';
+import { GridPageTransition } from './components/common/GridPageTransition';
 import { HeroSlider } from './components/home/HeroSlider';
 import { MarqueeSection } from './components/home/MarqueeSection';
 import { WelcomeSection } from './components/home/WelcomeSection';
@@ -7,13 +8,14 @@ import { MajorServicesSlider } from './components/home/MajorServicesSlider';
 import { EmergencyCtaBanner } from './components/home/EmergencyCtaBanner';
 import { PremierHvacSection } from './components/home/PremierHvacSection';
 import { HowItWorksSection } from './components/home/HowItWorksSection';
+import { SectionLoading } from './components/common/SectionLoading';
 import { HvacEstimatorProvider } from './context/HvacEstimatorContext';
 import { useSplitTextLinks } from './utils/useSplitTextLinks';
 import { useLenis } from './hooks/useLenis';
 
-// Lazy load below-the-fold and heavy 3D components for low-network acceleration
-const ServiceAreaGlobe = lazy(() =>
-  import('./components/home/ServiceAreaGlobe').then((m) => ({ default: m.ServiceAreaGlobe }))
+// Lazy load below-the-fold components
+const GeoMapSection = lazy(() =>
+  import('./components/home/GeoMapSection').then((m) => ({ default: m.GeoMapSection }))
 );
 const BeforeAfterSection = lazy(() =>
   import('./components/home/BeforeAfterSection').then((m) => ({ default: m.BeforeAfterSection }))
@@ -34,16 +36,15 @@ const FloatingHvacWidget = lazy(() =>
   import('./components/home/FloatingHvacWidget').then((m) => ({ default: m.FloatingHvacWidget }))
 );
 
-const SectionPlaceholder: React.FC<{ minHeight?: string }> = ({ minHeight = 'min-h-[400px]' }) => (
-  <div className={`w-full ${minHeight} bg-slate-50/50 flex items-center justify-center`} />
-);
-
 export default function App() {
   useLenis();
   useSplitTextLinks();
 
   return (
     <HvacEstimatorProvider>
+      {/* 12-Grid Fullscreen Page Transition in Color #2934CE */}
+      <GridPageTransition />
+
       {/* Global Sticky Navbar */}
       <Navbar />
 
@@ -68,36 +69,36 @@ export default function App() {
           {/* 6. Premier HVAC Contractor Differentiators & Technical Grid (Eager) */}
           <PremierHvacSection />
 
-          {/* 7. Interactive 3D WebGL Particle Globe Service Area */}
-          <Suspense fallback={<SectionPlaceholder minHeight="min-h-[600px]" />}>
-            <ServiceAreaGlobe />
+          {/* 7. Dynamic Live Google Maps Route Dispatch & Service Area Section */}
+          <Suspense fallback={<SectionLoading variant="map" minHeight="min-h-[700px]" label="Loading Live Dispatch & Service Areas..." />}>
+            <GeoMapSection />
           </Suspense>
 
           {/* 8. 4-Step Process: How It Works From Dispatch to Sign-off */}
           <HowItWorksSection />
 
           {/* 9. Visual Proof: Interactive Before & After System Replacements */}
-          <Suspense fallback={<SectionPlaceholder minHeight="min-h-[500px]" />}>
+          <Suspense fallback={<SectionLoading variant="split" minHeight="min-h-[520px]" label="Loading Before & After Transformations..." />}>
             <BeforeAfterSection />
           </Suspense>
 
           {/* 10. Social Proof: Customer Testimonials Masonry Grid */}
-          <Suspense fallback={<SectionPlaceholder minHeight="min-h-[500px]" />}>
+          <Suspense fallback={<SectionLoading variant="grid" minHeight="min-h-[500px]" label="Loading Verified Reviews..." />}>
             <TestimonialsSection />
           </Suspense>
 
           {/* 11. Financial Affordability: 0% APR Financing Calculator */}
-          <Suspense fallback={<SectionPlaceholder minHeight="min-h-[400px]" />}>
+          <Suspense fallback={<SectionLoading variant="split" minHeight="min-h-[450px]" label="Loading Financing Options..." />}>
             <FinancingCalculator />
           </Suspense>
 
           {/* 12. Objection Handling: Frequently Asked Questions Accordion */}
-          <Suspense fallback={<SectionPlaceholder minHeight="min-h-[400px]" />}>
+          <Suspense fallback={<SectionLoading variant="accordion" minHeight="min-h-[420px]" label="Loading FAQs..." />}>
             <FaqSection />
           </Suspense>
 
           {/* 13. Authority & Education: HVAC Learning Blog & Article Reader */}
-          <Suspense fallback={<SectionPlaceholder minHeight="min-h-[400px]" />}>
+          <Suspense fallback={<SectionLoading variant="grid" minHeight="min-h-[460px]" label="Loading Knowledge Center..." />}>
             <BlogSection />
           </Suspense>
 
