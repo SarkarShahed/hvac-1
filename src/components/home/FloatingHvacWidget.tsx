@@ -196,7 +196,7 @@ export const FloatingHvacWidget: React.FC = () => {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 15, scale: 0.96 }}
             transition={modalSpring}
-            className="fixed bottom-16 right-0 z-50 w-[calc(100vw-24px)] sm:w-[430px] max-h-[85vh] shadow-2xl rounded-none"
+            className="fixed bottom-[calc(1%+42px)] right-[1%] z-50 w-[calc(100vw-24px)] sm:w-[430px] max-h-[85vh] shadow-2xl rounded-none"
           >
             <HvacPricingEstimator
               isFloatingModal
@@ -213,7 +213,7 @@ export const FloatingHvacWidget: React.FC = () => {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 15, scale: 0.96 }}
             transition={modalSpring}
-            className="fixed bottom-16 right-0 z-50 w-[calc(100vw-24px)] sm:w-[400px] max-h-[85vh] shadow-2xl rounded-none"
+            className="fixed bottom-[calc(1%+42px)] right-[1%] z-50 w-[calc(100vw-24px)] sm:w-[400px] max-h-[85vh] shadow-2xl rounded-none"
           >
             <FloatingFinanceModal onClose={() => setActiveModal(null)} />
           </motion.div>
@@ -225,7 +225,7 @@ export const FloatingHvacWidget: React.FC = () => {
         initial={{ opacity: 0, scale: 0.85, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ delay: 0.2, ...modalSpring }}
-        className="fixed bottom-0 right-0 z-50 flex items-center"
+        className="fixed bottom-[1%] right-[1%] z-50 flex items-center"
       >
         {/* Floating Call Options Popover (Apple Action Card) */}
         <AnimatePresence>
@@ -323,14 +323,14 @@ export const FloatingHvacWidget: React.FC = () => {
             onMouseEnter={() => setHoveredButton('estimator')}
             onMouseLeave={() => setHoveredButton(null)}
             transition={pillSpring}
-            className={`relative flex items-center h-[38px] rounded-none transition-colors duration-200 cursor-pointer overflow-hidden shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] ${
+            className={`relative flex items-center h-[35px] rounded-none transition-colors duration-200 cursor-pointer overflow-hidden shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] ${
               activeModal === 'estimator'
                 ? 'bg-[#FE552F] text-white shadow-lg'
                 : 'bg-white/10 hover:bg-white/20 text-white'
             } ${
               showLabels || hoveredButton === 'estimator'
-                ? 'px-3.5 gap-2'
-                : 'w-[38px] justify-center px-0'
+                ? 'px-3 gap-2'
+                : 'w-[35px] justify-center px-0'
             }`}
             title="Instant HVAC Cost Estimator"
           >
@@ -364,14 +364,14 @@ export const FloatingHvacWidget: React.FC = () => {
             onMouseEnter={() => setHoveredButton('finance')}
             onMouseLeave={() => setHoveredButton(null)}
             transition={pillSpring}
-            className={`relative flex items-center h-[38px] rounded-none transition-colors duration-200 cursor-pointer overflow-hidden shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] ${
+            className={`relative flex items-center h-[35px] rounded-none transition-colors duration-200 cursor-pointer overflow-hidden shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] ${
               activeModal === 'finance'
                 ? 'bg-blue-600 text-white shadow-lg'
                 : 'bg-white/10 hover:bg-white/20 text-white'
             } ${
               showLabels || hoveredButton === 'finance'
-                ? 'px-3.5 gap-2'
-                : 'w-[38px] justify-center px-0'
+                ? 'px-3 gap-2'
+                : 'w-[35px] justify-center px-0'
             }`}
             title="0% APR Finance Calculator"
           >
@@ -405,14 +405,14 @@ export const FloatingHvacWidget: React.FC = () => {
             onMouseEnter={() => setHoveredButton('call')}
             onMouseLeave={() => setHoveredButton(null)}
             transition={pillSpring}
-            className={`relative flex items-center h-[38px] rounded-none transition-colors duration-200 cursor-pointer overflow-hidden shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] ${
+            className={`relative flex items-center h-[35px] rounded-none transition-colors duration-200 cursor-pointer overflow-hidden shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] ${
               isCallMenuOpen
                 ? 'bg-[#FE552F] text-white shadow-lg'
                 : 'bg-white/10 hover:bg-white/20 text-white'
             } ${
               showLabels || hoveredButton === 'call'
-                ? 'px-3.5 gap-2'
-                : 'w-[38px] justify-center px-0'
+                ? 'px-3 gap-2'
+                : 'w-[35px] justify-center px-0'
             }`}
             title="Contact (WhatsApp & Direct Call)"
           >

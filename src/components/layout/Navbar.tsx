@@ -402,7 +402,7 @@ export const Navbar: React.FC = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                   {servicesMegaMenu.map((group, idx) => (
                     <div key={idx} className="space-y-2">
-                      <h4 className="font-['Nohemi'] font-bold text-xs tracking-wide text-white/95 pb-1 border-b border-white/15">
+                      <h4 className="font-['Nohemi'] font-bold text-xs tracking-wide text-[#2934ce] pb-1 border-b border-white/15">
                         {group.category}
                       </h4>
                       <ul className="space-y-1.5">
@@ -430,7 +430,7 @@ export const Navbar: React.FC = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   {aboutMegaMenu.map((group, idx) => (
                     <div key={idx} className="space-y-2">
-                      <h4 className="font-['Nohemi'] font-bold text-xs tracking-wide text-white/95 pb-1 border-b border-white/15">
+                      <h4 className="font-['Nohemi'] font-bold text-xs tracking-wide text-[#2934ce] pb-1 border-b border-white/15">
                         {group.category}
                       </h4>
                       <ul className="space-y-2">
@@ -578,7 +578,7 @@ export const Navbar: React.FC = () => {
               <div className="flex-1 overflow-y-auto space-y-4 pr-1 py-1">
                 {servicesMegaMenu.map((group, idx) => (
                   <div key={idx} className="bg-[#181C20] rounded-xl p-4 border border-zinc-800 space-y-2.5">
-                    <h4 className="font-['Nohemi'] font-bold text-sm text-[#FE552F] pb-1.5 border-b border-zinc-800/80">
+                    <h4 className="font-['Nohemi'] font-bold text-sm text-[#2934ce] pb-1.5 border-b border-zinc-800/80">
                       {group.category}
                     </h4>
                     <div className="grid grid-cols-1 gap-2">
@@ -621,7 +621,7 @@ export const Navbar: React.FC = () => {
               <div className="flex-1 overflow-y-auto space-y-4 pr-1 py-1">
                 {aboutMegaMenu.map((group, idx) => (
                   <div key={idx} className="bg-[#181C20] rounded-xl p-4 border border-zinc-800 space-y-2.5">
-                    <h4 className="font-['Nohemi'] font-bold text-sm text-[#FE552F] pb-1.5 border-b border-zinc-800/80">
+                    <h4 className="font-['Nohemi'] font-bold text-sm text-[#2934ce] pb-1.5 border-b border-zinc-800/80">
                       {group.category}
                     </h4>
                     <div className="grid grid-cols-1 gap-2">
