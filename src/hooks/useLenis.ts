@@ -10,9 +10,14 @@ export function useLenis() {
 
     const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
-    // Initialize Lenis with optimized smooth scroll profile
+    // Use completely native mobile momentum scroll on touch devices to avoid layout fights/snap loops
+    if (isTouch) {
+      return;
+    }
+
+    // Initialize Lenis ONLY on non-touch (desktop) devices for premium smooth scrolling
     const lenis = new Lenis({
-      duration: isTouch ? 0.7 : 0.9,
+      duration: 0.9,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       orientation: 'vertical',
       gestureOrientation: 'vertical',
@@ -35,29 +40,7 @@ export function useLenis() {
     gsap.ticker.add(updateRaf);
     gsap.ticker.lagSmoothing(0); // Prevents frame drops and jitter during inertia scrolling
 
-    // Smooth anchor link handler
-    const handleAnchorClick = (e: MouseEvent) => {
-      const target = (e.target as HTMLElement).closest('a[href^="#"]');
-      if (target) {
-        const href = target.getAttribute('href');
-        if (href && href.length > 1 && href.startsWith('#')) {
-          const targetEl = document.querySelector(href);
-          if (targetEl) {
-            e.preventDefault();
-            lenis.scrollTo(targetEl as HTMLElement, {
-              offset: -40,
-              duration: 0.9,
-              easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-            });
-          }
-        }
-      }
-    };
-
-    document.addEventListener('click', handleAnchorClick, { passive: false });
-
     return () => {
-      document.removeEventListener('click', handleAnchorClick);
       gsap.ticker.remove(updateRaf);
       lenis.destroy();
       lenisRef.current = null;

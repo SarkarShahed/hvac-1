@@ -186,7 +186,20 @@ export const Navbar: React.FC = () => {
     const targetId = href.startsWith('#') ? href.substring(1) : href;
     const element = document.getElementById(targetId);
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+      window.dispatchEvent(
+        new CustomEvent('trigger-12grid-transition', {
+          detail: {
+            onComplete: () => {
+              const lenis = (window as unknown as { lenisInstance?: any }).lenisInstance;
+              if (lenis) {
+                lenis.scrollTo(element, { offset: -40, immediate: true });
+              } else {
+                element.scrollIntoView({ behavior: 'auto' });
+              }
+            },
+          },
+        })
+      );
     }
     setMobileMenuOpen(false);
   };

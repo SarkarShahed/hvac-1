@@ -149,6 +149,11 @@ const serviceItems: ServiceCardItem[] = [
 
 export const MajorServicesSlider: React.FC = () => {
   const [viewMode, setViewMode] = useState<'slider' | 'grid'>('grid');
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
+
+  useEffect(() => {
+    setIsTouchDevice('ontouchstart' in window || navigator.maxTouchPoints > 0);
+  }, []);
 
   const sectionRef = useRef<HTMLElement>(null);
   const trackWrapperRef = useRef<HTMLDivElement>(null);
@@ -157,14 +162,17 @@ export const MajorServicesSlider: React.FC = () => {
 
   // Initialize and manage GSAP Horizontal Pin ScrollTrigger with proper cleanup and refresh
   useEffect(() => {
+    if (viewMode !== 'slider' || isTouchDevice) {
+      if (scrollTriggerRef.current) {
+        scrollTriggerRef.current.kill();
+        scrollTriggerRef.current = null;
+      }
+      return;
+    }
+
     let timer: NodeJS.Timeout;
 
     const ctx = gsap.context(() => {
-      if (viewMode !== 'slider') {
-        ScrollTrigger.refresh();
-        return;
-      }
-
       const section = sectionRef.current;
       const track = trackRef.current;
       const wrapper = trackWrapperRef.current;
@@ -200,8 +208,11 @@ export const MajorServicesSlider: React.FC = () => {
       }, 100);
     }, sectionRef);
 
+    let lastWidth = window.innerWidth;
     let resizeTimer: NodeJS.Timeout;
     const handleResize = () => {
+      if (window.innerWidth === lastWidth) return;
+      lastWidth = window.innerWidth;
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(() => {
         ScrollTrigger.refresh();
@@ -220,7 +231,7 @@ export const MajorServicesSlider: React.FC = () => {
       }
       ScrollTrigger.refresh();
     };
-  }, [viewMode]);
+  }, [viewMode, isTouchDevice]);
 
   return (
     <section
@@ -298,10 +309,19 @@ export const MajorServicesSlider: React.FC = () => {
 
         {/* View Mode 1: GSAP Pin Type Horizontal Slider (3 Cards at a time in View) */}
         {viewMode === 'slider' && (
-          <div ref={trackWrapperRef} className="w-full my-auto overflow-hidden py-4">
+          <div 
+            ref={trackWrapperRef} 
+            className={`w-full my-auto py-4 ${
+              isTouchDevice 
+                ? 'overflow-x-auto snap-x snap-mandatory scrollbar-none scroll-smooth' 
+                : 'overflow-hidden'
+            }`}
+          >
             <div
               ref={trackRef}
-              className="flex gap-5 sm:gap-6 w-max transform-gpu will-change-transform"
+              className={`flex gap-5 sm:gap-6 w-max transform-gpu ${
+                isTouchDevice ? 'px-1' : 'will-change-transform'
+              }`}
             >
               {serviceItems.map((item) => {
                 const Icon = item.icon;
@@ -309,7 +329,9 @@ export const MajorServicesSlider: React.FC = () => {
                   <a
                     key={item.id}
                     href={item.href}
-                    className="group relative block w-[85vw] sm:w-[46vw] lg:w-[calc((100vw-110px)/3)] h-[480px] sm:h-[500px] lg:h-[520px] shrink-0 rounded-[8px] border-0 overflow-hidden bg-[#121417] shadow-md text-left cursor-pointer transform-gpu hover:-translate-y-1 transition-transform duration-300"
+                    className={`group relative block w-[85vw] sm:w-[46vw] lg:w-[calc((100vw-110px)/3)] h-[480px] sm:h-[500px] lg:h-[520px] shrink-0 rounded-[8px] border-0 overflow-hidden bg-[#121417] shadow-md text-left cursor-pointer transform-gpu hover:-translate-y-1 transition-transform duration-300 ${
+                      isTouchDevice ? 'snap-center sm:snap-start' : ''
+                    }`}
                   >
                     {/* Background Image Layer with Zoom & Contrast */}
                     <div className="absolute inset-0 w-full h-full overflow-hidden">

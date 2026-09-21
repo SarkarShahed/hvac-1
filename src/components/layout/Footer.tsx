@@ -10,6 +10,8 @@ import {
   CheckCircle2,
   X,
   Sliders,
+  ChevronDown,
+  ChevronUp,
 } from 'lucide-react';
 import { SplitTextHover } from '../ui/SplitTextHover';
 
@@ -33,41 +35,56 @@ export const Footer: React.FC = () => {
     marketing: false,
   });
   const [cookiesSavedToast, setCookiesSavedToast] = useState(false);
+  const [openColumns, setOpenColumns] = useState<Record<number, boolean>>({});
+
+  const toggleColumn = (idx: number) => {
+    setOpenColumns((prev) => ({
+      ...prev,
+      [idx]: !prev[idx],
+    }));
+  };
 
   const handleLinkClick = (e: React.MouseEvent, action?: string, href?: string) => {
+    let targetEl: HTMLElement | null = null;
     if (action) {
       e.preventDefault();
       if (action === 'open-estimator') {
         window.dispatchEvent(new CustomEvent('open-hvac-estimator'));
-        const heroEl = document.getElementById('hero-section');
-        heroEl?.scrollIntoView({ behavior: 'smooth' });
+        targetEl = document.getElementById('hero-section');
       } else if (action === 'scroll-financing') {
-        const el = document.getElementById('financing-calculator');
-        el?.scrollIntoView({ behavior: 'smooth' });
+        targetEl = document.getElementById('financing-calculator');
       } else if (action === 'scroll-reviews') {
-        const el = document.getElementById('testimonials');
-        el?.scrollIntoView({ behavior: 'smooth' });
+        targetEl = document.getElementById('testimonials');
       } else if (action === 'scroll-why-us') {
-        const el = document.getElementById('premier-hvac-section');
-        el?.scrollIntoView({ behavior: 'smooth' });
+        targetEl = document.getElementById('premier-hvac-section');
       } else if (action === 'scroll-services') {
-        const el = document.getElementById('major-services-section');
-        el?.scrollIntoView({ behavior: 'smooth' });
+        targetEl = document.getElementById('major-services-section');
       } else if (action === 'scroll-how-it-works') {
-        const el = document.getElementById('how-it-works');
-        el?.scrollIntoView({ behavior: 'smooth' });
+        targetEl = document.getElementById('how-it-works');
       } else if (action === 'scroll-faq') {
-        const el = document.getElementById('faq-section');
-        el?.scrollIntoView({ behavior: 'smooth' });
+        targetEl = document.getElementById('faq-section');
       }
-      return;
-    }
-
-    if (href && href.startsWith('#')) {
+    } else if (href && href.startsWith('#')) {
       e.preventDefault();
       const targetId = href.replace('#', '');
-      const el = document.getElementById(targetId);
-      el?.scrollIntoView({ behavior: 'smooth' });
+      targetEl = document.getElementById(targetId);
+    }
+
+    if (targetEl) {
+      window.dispatchEvent(
+        new CustomEvent('trigger-12grid-transition', {
+          detail: {
+            onComplete: () => {
+              const lenis = (window as unknown as { lenisInstance?: any }).lenisInstance;
+              if (lenis) {
+                lenis.scrollTo(targetEl as HTMLElement, { offset: -40, immediate: true });
+              } else {
+                targetEl?.scrollIntoView({ behavior: 'auto' });
+              }
+            },
+          },
+        })
+      );
     }
   };
 
@@ -154,7 +171,7 @@ export const Footer: React.FC = () => {
       {/* Outer Card Container */}
       <div className="w-full max-w-[100vw] rounded-none overflow-hidden bg-white shadow-none border-0 border-none flex flex-col">
         {/* Crisp White Content Canvas */}
-        <div className="w-full max-w-[100vw] border-0 border-none bg-white py-7 px-[20px] sm:p-12 lg:p-16 flex flex-col rounded-none">
+        <div className="w-full max-w-[100vw] border-0 border-none bg-white pt-7 pb-[100px] px-[20px] sm:p-12 lg:p-16 flex flex-col rounded-none">
           {/* Top Header Row: Call to Action + Contact Email / Phone */}
           <div className="w-full flex flex-col md:flex-row md:items-start justify-between gap-8 pb-12 sm:pb-16 border-b border-zinc-100">
             {/* Left Headline */}
@@ -203,35 +220,49 @@ export const Footer: React.FC = () => {
           </div>
 
           {/* Middle Section: Multi-Column HVAC Pages Navigation Links */}
-          <div className="w-full py-12 sm:py-16 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-8 sm:gap-10 text-left">
-            {footerColumns.map((col, idx) => (
-              <div key={idx} className="flex flex-col space-y-3.5">
-                {/* Column Title in Delight / SF Pro */}
-                <h4 className="font-['Delight'] text-xs font-semibold text-zinc-400 tracking-wider uppercase">
-                  {col.title}
-                </h4>
+          <div className="w-full py-8 sm:py-16 grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-6 gap-0 sm:gap-10 text-left">
+            {footerColumns.map((col, idx) => {
+              const isOpen = !!openColumns[idx];
+              return (
+                <div key={idx} className="flex flex-col border-b border-zinc-100 sm:border-0 py-4 sm:py-0">
+                  {/* Column Title in Delight / SF Pro */}
+                  <button
+                    type="button"
+                    onClick={() => toggleColumn(idx)}
+                    className="w-full sm:w-auto flex items-center justify-between sm:justify-start gap-2 text-left font-['Delight'] text-xs font-semibold text-[#121417] sm:text-zinc-400 tracking-wider uppercase focus:outline-none cursor-pointer py-1 sm:py-0"
+                  >
+                    <span>{col.title}</span>
+                    <span className="sm:hidden text-zinc-500 transition-transform duration-200">
+                      {isOpen ? (
+                        <ChevronUp className="w-4 h-4" />
+                      ) : (
+                        <ChevronDown className="w-4 h-4" />
+                      )}
+                    </span>
+                  </button>
 
-                {/* Column Links List */}
-                <ul className="space-y-2.5">
-                  {col.links.map((link, lIdx) => (
-                    <li key={lIdx}>
-                      <a
-                        href={link.href || '#'}
-                        onClick={(e) => handleLinkClick(e, link.action, link.href)}
-                        className="group inline-flex items-center gap-2 font-['Delight'] text-sm text-zinc-700 hover:text-[#2934ce] transition-colors leading-snug cursor-pointer"
-                      >
-                        <SplitTextHover text={link.label} />
-                        {link.isBadge && (
-                          <span className="text-[10px] font-['Delight'] font-semibold px-1.5 py-0.5 rounded-[4px] bg-[#ECEDEF] group-hover:bg-[#2934ce]/10 text-zinc-700 group-hover:text-[#2934ce] transition-colors shrink-0">
-                            {link.badgeText}
-                          </span>
-                        )}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+                  {/* Column Links List */}
+                  <ul className={`space-y-2.5 mt-3 sm:mt-3.5 ${isOpen ? 'block' : 'hidden sm:block'}`}>
+                    {col.links.map((link, lIdx) => (
+                      <li key={lIdx}>
+                        <a
+                          href={link.href || '#'}
+                          onClick={(e) => handleLinkClick(e, link.action, link.href)}
+                          className="group inline-flex items-center gap-2 font-['Delight'] text-sm text-zinc-700 hover:text-[#2934ce] transition-colors leading-snug cursor-pointer"
+                        >
+                          <SplitTextHover text={link.label} />
+                          {link.isBadge && (
+                            <span className="text-[10px] font-['Delight'] font-semibold px-1.5 py-0.5 rounded-[4px] bg-[#ECEDEF] group-hover:bg-[#2934ce]/10 text-zinc-700 group-hover:text-[#2934ce] transition-colors shrink-0">
+                              {link.badgeText}
+                            </span>
+                          )}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              );
+            })}
           </div>
 
           {/* Bottom Bar: Social Icons, Policies, Copyright & Credits */}
@@ -286,7 +317,7 @@ export const Footer: React.FC = () => {
             </div>
 
             {/* Policy Links in Center */}
-            <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-zinc-600 order-3 lg:order-2 mt-[50px] mb-[70px]">
+            <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-zinc-600 order-2 lg:order-2 mt-6 mb-6 lg:mt-[50px] lg:mb-[70px]">
               <button
                 type="button"
                 onClick={() => setActiveModal('privacy')}
@@ -313,7 +344,7 @@ export const Footer: React.FC = () => {
             </div>
 
             {/* Copyright and Credits on Right */}
-            <div className="flex items-center gap-3 text-zinc-500 order-2 lg:order-3">
+            <div className="flex items-center gap-3 text-zinc-500 order-3 lg:order-3">
               <span>2026 © Preferred Air Group</span>
               <span className="text-zinc-300">•</span>
               <span className="text-zinc-700 font-medium">

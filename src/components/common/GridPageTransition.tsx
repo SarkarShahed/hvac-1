@@ -85,7 +85,12 @@ export const GridPageTransition: React.FC = () => {
             detail: {
               onComplete: () => {
                 if (element) {
-                  element.scrollIntoView({ behavior: 'smooth' });
+                  const lenis = (window as unknown as { lenisInstance?: any }).lenisInstance;
+                  if (lenis) {
+                    lenis.scrollTo(element as HTMLElement, { offset: -40, immediate: true });
+                  } else {
+                    element.scrollIntoView({ behavior: 'auto' });
+                  }
                 }
               },
             },
