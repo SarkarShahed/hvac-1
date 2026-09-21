@@ -749,7 +749,7 @@ export const GeoMapSection: React.FC = () => {
 
   return (
     <section
-      id="service-areas"
+      id="service-area-globe-section"
       className="relative w-full min-h-screen bg-[#0F1216] text-white py-12 md:py-20 px-3 sm:px-6 lg:px-8 overflow-hidden font-['Delight']"
     >
       <div id="geomap" className="absolute -top-20 opacity-0 pointer-events-none" />
