@@ -196,7 +196,7 @@ export const FloatingHvacWidget: React.FC = () => {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 15, scale: 0.96 }}
             transition={modalSpring}
-            className="fixed bottom-[calc(0.7%+42px)] lg:bottom-[calc(1%+42px)] right-[1.8%] lg:right-[0.7%] z-50 w-[calc(100vw-24px)] sm:w-[430px] max-h-[85vh] shadow-2xl rounded-none"
+            className="fixed bottom-[calc(1.5%+42px)] lg:bottom-[calc(1%+42px)] right-[1.8%] lg:right-[0.7%] z-50 w-[calc(100vw-24px)] sm:w-[430px] max-h-[85vh] shadow-2xl rounded-none"
           >
             <HvacPricingEstimator
               isFloatingModal
@@ -213,7 +213,7 @@ export const FloatingHvacWidget: React.FC = () => {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 15, scale: 0.96 }}
             transition={modalSpring}
-            className="fixed bottom-[calc(0.7%+42px)] lg:bottom-[calc(1%+42px)] right-[1.8%] lg:right-[0.7%] z-50 w-[calc(100vw-24px)] sm:w-[400px] max-h-[85vh] shadow-2xl rounded-none"
+            className="fixed bottom-[calc(1.5%+42px)] lg:bottom-[calc(1%+42px)] right-[1.8%] lg:right-[0.7%] z-50 w-[calc(100vw-24px)] sm:w-[400px] max-h-[85vh] shadow-2xl rounded-none"
           >
             <FloatingFinanceModal onClose={() => setActiveModal(null)} />
           </motion.div>
@@ -225,7 +225,7 @@ export const FloatingHvacWidget: React.FC = () => {
         initial={{ opacity: 0, scale: 0.85, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ delay: 0.2, ...modalSpring }}
-        className="fixed bottom-[0.7%] lg:bottom-[1%] right-[1.8%] lg:right-[0.7%] z-50 flex items-center"
+        className="fixed bottom-[1.5%] lg:bottom-[1%] right-[1.8%] lg:right-[0.7%] z-50 flex items-center"
       >
         {/* Floating Call Options Popover (Apple Action Card) */}
         <AnimatePresence>

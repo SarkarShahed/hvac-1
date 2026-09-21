@@ -48,9 +48,9 @@ export default function App() {
       {/* Global Sticky Navbar */}
       <Navbar />
 
-      <div className="w-full min-h-screen flex flex-col bg-[#121417] text-white overflow-x-hidden border-0 outline-none">
+      <div className="w-full min-h-screen flex flex-col bg-[#121417] text-[#FFFFFF] overflow-x-hidden border-0 outline-none">
         {/* Main Content Area */}
-        <main className="flex-1 w-full max-w-[100vw] flex flex-col items-center justify-start p-0 m-0">
+        <main className="flex-1 w-full max-w-full overflow-x-hidden flex flex-col items-center justify-start p-0 m-0">
           {/* 1. Cinematic Hero with Instant Cost Estimator (Critical LCP - Eager) */}
           <HeroSlider />
 

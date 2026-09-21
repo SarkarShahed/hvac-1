@@ -154,7 +154,7 @@ export const Footer: React.FC = () => {
       {/* Outer Card Container */}
       <div className="w-full max-w-[100vw] rounded-none overflow-hidden bg-white shadow-none border-0 border-none flex flex-col">
         {/* Crisp White Content Canvas */}
-        <div className="w-full max-w-[100vw] border-0 border-none bg-white p-7 sm:p-12 lg:p-16 flex flex-col rounded-none">
+        <div className="w-full max-w-[100vw] border-0 border-none bg-white py-7 px-[20px] sm:p-12 lg:p-16 flex flex-col rounded-none">
           {/* Top Header Row: Call to Action + Contact Email / Phone */}
           <div className="w-full flex flex-col md:flex-row md:items-start justify-between gap-8 pb-12 sm:pb-16 border-b border-zinc-100">
             {/* Left Headline */}

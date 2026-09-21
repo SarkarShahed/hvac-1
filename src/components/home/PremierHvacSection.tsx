@@ -255,13 +255,18 @@ export const PremierHvacSection: React.FC = () => {
       }, 100);
     }, sectionRef);
 
+    let resizeTimer: NodeJS.Timeout;
     const handleResize = () => {
-      ScrollTrigger.refresh();
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        ScrollTrigger.refresh();
+      }, 150);
     };
     window.addEventListener('resize', handleResize);
 
     return () => {
       clearTimeout(timer);
+      clearTimeout(resizeTimer);
       window.removeEventListener('resize', handleResize);
       ctx.revert();
       if (scrollTriggerRef.current) {
