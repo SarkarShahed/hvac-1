@@ -286,7 +286,7 @@ export const Footer: React.FC = () => {
             </div>
 
             {/* Policy Links in Center */}
-            <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-zinc-600 order-3 lg:order-2">
+            <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-zinc-600 order-3 lg:order-2 mt-[50px] mb-[70px]">
               <button
                 type="button"
                 onClick={() => setActiveModal('privacy')}

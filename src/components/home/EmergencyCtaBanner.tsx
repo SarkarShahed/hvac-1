@@ -104,7 +104,7 @@ export const EmergencyCtaBanner: React.FC = () => {
             href="tel:4805554822"
             className="group w-full sm:w-auto min-w-[210px] h-[45px] inline-flex items-center justify-center gap-2.5 px-7 rounded-none bg-[#FE552F] text-white hover:bg-[#e04521] transition-all duration-200 shadow-md hover:shadow-lg hover:scale-[1.02] cursor-pointer"
           >
-            <PhoneCall className="w-4 h-4 stroke-[2.2] animate-bounce" />
+            <PhoneCall className="w-5 h-5 stroke-[2.2] animate-bounce" />
             <span className="font-['Delight'] font-medium text-sm sm:text-base tracking-wide whitespace-nowrap">
               <SplitTextHover text="Emergency Call" />
             </span>
@@ -115,9 +115,8 @@ export const EmergencyCtaBanner: React.FC = () => {
             id="emergency-cta-book-btn"
             type="button"
             onClick={() => setIsModalOpen(true)}
-            className="group w-full sm:w-auto min-w-[210px] h-[45px] inline-flex items-center justify-center gap-2 px-7 rounded-none bg-[#121417] text-white hover:bg-zinc-800 transition-all duration-200 shadow-md hover:shadow-lg hover:scale-[1.02] cursor-pointer"
+            className="group w-full sm:w-auto min-w-[210px] h-[45px] inline-flex items-center justify-center px-7 rounded-none bg-[#121417] text-white hover:bg-zinc-800 transition-all duration-200 shadow-md hover:shadow-lg hover:scale-[1.02] cursor-pointer"
           >
-            <Calendar className="w-4 h-4 text-zinc-300 stroke-[2]" />
             <span className="font-['Delight'] font-medium text-sm sm:text-base tracking-wide whitespace-nowrap">
               <SplitTextHover text="Book Rapid Service" />
             </span>
